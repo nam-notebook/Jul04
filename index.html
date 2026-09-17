@@ -30,20 +30,21 @@
 
     <!-- TOP NAVIGATION LAYOUT -->
     <header class="bg-white border-b-2 border-darkBorder sticky top-0 z-50 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-3">
             
-            <div class="flex items-center space-x-2">
+            <!-- Logo Header -->
+            <div class="flex items-center justify-center space-x-2 text-center w-full md:w-auto">
                 <span class="text-2xl font-black tracking-wider text-slate-900">臺語/華語 <span class="text-amber-600 text-sm font-normal">TW Mandarin</span></span>
             </div>
 
-            <!-- Global Mode Switcher -->
-            <div class="bg-slate-100 p-1 rounded-lg border border-slate-300 flex space-x-1">
+            <!-- Global Mode Switcher (Centered on Mobile) -->
+            <div class="bg-slate-100 p-1 rounded-lg border border-slate-300 flex justify-center space-x-1 mx-auto md:mx-0">
                 <button id="nav-mode-vocab" onclick="switchBankMode('vocab')" class="px-4 py-1.5 text-sm font-semibold rounded-md transition-all bg-white text-slate-900 shadow-sm">Vocabulary</button>
                 <button id="nav-mode-sentences" onclick="switchBankMode('sentences')" class="px-4 py-1.5 text-sm font-semibold rounded-md transition-all text-slate-600 hover:text-slate-900">Sentences</button>
             </div>
 
-            <!-- Nav Links -->
-            <nav class="flex flex-wrap items-center gap-2 text-sm font-medium">
+            <!-- Nav Links (Centered on Mobile) -->
+            <nav class="flex flex-wrap items-center justify-center md:justify-end gap-2 text-sm font-medium w-full md:w-auto">
                 <button onclick="navigate('bank')" class="nav-btn px-3 py-1.5 rounded-lg border border-slate-300 hover:border-darkBorder hover:bg-amber-50 transition">Bank</button>
                 <button onclick="navigate('flashcards')" class="nav-btn px-3 py-1.5 rounded-lg border border-slate-300 hover:border-darkBorder hover:bg-amber-50 transition">Flashcards</button>
                 <button onclick="navigate('quiz')" class="nav-btn px-3 py-1.5 rounded-lg border border-slate-300 hover:border-darkBorder hover:bg-amber-50 transition">Quiz</button>
@@ -59,7 +60,7 @@
         <!-- SECTION 1: BANK -->
         <section id="page-bank" class="page-view space-y-6">
             <div class="bg-white p-4 rounded-xl border-2 border-darkBorder shadow-sm flex flex-col lg:flex-row justify-between items-center gap-4">
-                <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 w-full lg:w-auto">
                     <select id="bank-filter-cat" onchange="renderBank()" class="border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:border-darkBorder">
                         <option value="ALL">All Categories</option>
                     </select>
@@ -69,7 +70,7 @@
                     </select>
                     <input type="text" id="bank-search" oninput="renderBank()" placeholder="Search Chinese, Pinyin, EN, TH..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full sm:w-64 focus:outline-none focus:border-darkBorder" />
                 </div>
-                <div class="flex flex-wrap items-center justify-between lg:justify-end gap-3 w-full lg:w-auto text-sm border-t lg:border-t-0 pt-3 lg:pt-0">
+                <div class="flex flex-wrap items-center justify-center lg:justify-end gap-3 w-full lg:w-auto text-sm border-t lg:border-t-0 pt-3 lg:pt-0">
                     <span id="bank-pagination-info" class="text-slate-600 font-medium">Showing 0-0 of 0 items</span>
                     <select id="bank-page-size" onchange="changePageSize()" class="border border-slate-300 rounded-lg px-2 py-1 text-sm bg-white">
                         <option value="12">12 items / page</option><option value="24">24 items / page</option><option value="48">48 items / page</option>
@@ -145,7 +146,7 @@
 
         <!-- SECTION 3: FLASHCARD MODE -->
         <section id="page-flashcards" class="page-view hidden space-y-6">
-            <div class="bg-white p-4 rounded-xl border-2 border-darkBorder shadow-sm flex flex-wrap items-center gap-4">
+            <div class="bg-white p-4 rounded-xl border-2 border-darkBorder shadow-sm flex flex-wrap items-center justify-center md:justify-start gap-4">
                 <div>
                     <label class="text-xs font-bold text-slate-500 block mb-1">MODE</label>
                     <select id="fc-filter-mode" class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-bold text-amber-900 bg-amber-50">
@@ -170,8 +171,8 @@
                         <option value="10">10 items</option><option value="20" selected>20 items</option><option value="30">30 items</option><option value="50">50 items</option>
                     </select>
                 </div>
-                <div class="self-end">
-                    <button onclick="applyFlashcardFilter()" class="bg-slate-900 text-white font-bold px-6 py-1.5 rounded-lg border border-darkBorder hover:bg-slate-800 text-sm">Apply</button>
+                <div class="self-end w-full sm:w-auto text-center sm:text-left">
+                    <button onclick="applyFlashcardFilter()" class="w-full sm:w-auto bg-slate-900 text-white font-bold px-6 py-1.5 rounded-lg border border-darkBorder hover:bg-slate-800 text-sm">Apply</button>
                 </div>
             </div>
 
@@ -215,7 +216,7 @@
 
         <!-- SECTION 4: QUIZ MODE -->
         <section id="page-quiz" class="page-view hidden space-y-6">
-            <div class="bg-white p-4 rounded-xl border-2 border-darkBorder shadow-sm flex flex-wrap items-center gap-4">
+            <div class="bg-white p-4 rounded-xl border-2 border-darkBorder shadow-sm flex flex-wrap items-center justify-center md:justify-start gap-4">
                 <div>
                     <label class="text-xs font-bold text-slate-500 block mb-1">MODE</label>
                     <select id="quiz-filter-mode" class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-bold text-amber-900 bg-amber-50">
@@ -233,8 +234,8 @@
                         <option value="10">10 items</option><option value="20" selected>20 items</option><option value="30">30 items</option>
                     </select>
                 </div>
-                <div class="self-end">
-                    <button onclick="applyQuizFilter()" class="bg-slate-900 text-white font-bold px-6 py-1.5 rounded-lg border border-darkBorder hover:bg-slate-800 text-sm">Apply</button>
+                <div class="self-end w-full sm:w-auto text-center sm:text-left">
+                    <button onclick="applyQuizFilter()" class="w-full sm:w-auto bg-slate-900 text-white font-bold px-6 py-1.5 rounded-lg border border-darkBorder hover:bg-slate-800 text-sm">Apply</button>
                 </div>
             </div>
 
@@ -370,16 +371,15 @@
         function speakMandarin(text) {
             if (!text || !('speechSynthesis' in window)) return;
 
-            window.speechSynthesis.cancel(); // ล้างคิวเสียงเก่า
+            window.speechSynthesis.cancel();
 
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'zh-TW'; // บังคับภาษาจีนไต้หวัน
-            utterance.rate = 0.8;    // ชะลอความเร็วลงนิดหน่อยให้ฟังชัดขึ้น
-            utterance.pitch = 1.0;   // ระดับเสียงธรรมชาติ
+            utterance.lang = 'zh-TW';
+            utterance.rate = 0.8;
+            utterance.pitch = 1.0;
 
             const voices = window.speechSynthesis.getVoices();
             
-            // ค้นหาเสียงคุณภาพสูงของ iOS (คัดเสียง Eloquence ต่ำคุณภาพออก)
             const twVoice = voices.find(v => (v.lang === 'zh-TW' || v.lang === 'zh_TW') && !v.name.includes('Eloquence')) 
                          || voices.find(v => v.lang.startsWith('zh') && !v.name.includes('Eloquence'));
 
@@ -390,7 +390,6 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        // โหลดรายการเสียงเตรียมไว้สำหรับ Safari บน iOS
         if ('speechSynthesis' in window) {
             window.speechSynthesis.onvoiceschanged = () => {
                 window.speechSynthesis.getVoices();
