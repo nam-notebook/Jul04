@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taiwanese Mandarin Learning Platform</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FDFBF7',
+                        accent: '#FEF3C7',
+                        darkBorder: '#334155',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .card-flip { perspective: 1000px; }
+        .card-inner { transition: transform 0.6s; transform-style: preserve-3d; }
+        .card-inner.is-flipped { transform: rotateY(180deg); }
+        .card-front, .card-back { backface-visibility: hidden; }
+        .card-back { transform: rotateY(180deg); }
+    </style>
+</head>
+<body class="bg-cream text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <!-- TOP NAVIGATION LAYOUT -->
+    <header class="bg-white border-b-2 border-darkBorder sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl font-black tracking-wider text-slate-900">臺語/華語 <span class="text-amber-600 text-sm font-normal">TW Mandarin</span></span>
+            </div>
+
+            <!-- Global Mode Switcher for Bank -->
+            <div class="bg-slate-100 p-1 rounded-lg border border-slate-300 flex space-x-1">
+                <button id="nav-mode-vocab" onclick="switchBankMode('vocab')" class="px-4 py-1.5 text-sm font-semibold rounded-md transition-all bg-white text-slate-900 shadow-sm">Vocabulary</button>
+                <button id="nav-mode-sentences" onclick="switchBankMode('sentences')" class="px-4 py-1.5 text-sm font-semibold rounded-md transition-all text-slate-600 hover:text-slate-900">Sentences</button>
+            </div>
+
+            <!-- Right Nav Links -->
+            <nav class="flex flex-wrap items-center gap-2 text-sm font-medium">
+                <button onclick="navigate('bank')" class="nav-btn px-3 py-1.5 rounded-lg border border-slate-300 hover:border-darkBorder hover:bg-amber-50 transition">Bank</button>
+                <button onclick="navigate('flashcards')" class="nav-btn px-3 py-1.5 rounded-lg border border-slate-300 hover:border-darkBorder hover:bg-amber-50 transition">Flashcards</button>
+                <button onclick="navigate('quiz')" class="nav-btn px-3 py-1.5 rounded-lg border border-slate-300 hover:border-darkBorder hover:bg-amber-50 transition">Quiz</button>
+                <button onclick="navigate('hsk')" class="nav-btn px-3 py-1.5 rounded-lg border border-slate-300 hover:border-darkBorder hover:bg-amber-50 transition">HSK Mock Test</button>
+                <button onclick="navigate('add')" class="nav-btn px-3 py-1.5 rounded-lg border border-darkBorder bg-amber-200 hover:bg-amber-300 font-bold transition">+ Add Word</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+
+        <!-- SECTION 1: BANK -->
+        <section id="page-bank" class="page-view space-y-6">
+            <div class="bg-white p-4 rounded-xl border-2 border-darkBorder shadow-sm flex flex-col lg:flex-row justify-between items-center gap-4">
+                <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                    <select id="bank-filter-cat" onchange="renderBank()" class="border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:border-darkBorder">
+                        <option value="ALL">All Categories</option>
+                    </select>
+                    <select id="bank-filter-hsk" onchange="renderBank()" class="border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:border-darkBorder">
+                        <option value="ALL">All HSK Levels</option>
+                        <option value="1">HSK 1</option><option value="2">HSK 2</option><option value="3">HSK 3</option><option value="4">HSK 4</option><option value="5">HSK 5</option><option value="6">HSK 6</option>
+                    </select>
+                    <input type="text" id="bank-search" oninput="renderBank()" placeholder="Search Chinese, Pinyin, EN, TH..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full sm:w-64 focus:outline-none focus:border-darkBorder" />
+                </div>
+                <div class="flex flex-wrap items-center justify-between lg:justify-end gap-3 w-full lg:w-auto text-sm border-t lg:border-t-0 pt-3 lg:pt-0">
+                    <span id="bank-pagination-info" class="text-slate-600 font-medium">Showing 0-0 of 0 items</span>
+                    <select id="bank-page-size" onchange="changePageSize()" class="border border-slate-300 rounded-lg px-2 py-1 text-sm bg-white">
+                        <option value="12">12 items / page</option><option value="24">24 items / page</option><option value="48">48 items / page</option>
+                    </select>
+                    <div class="inline-flex rounded-md shadow-sm">
+                        <button onclick="goToPage('first')" class="px-2 py-1 border border-slate-300 rounded-l-lg hover:bg-slate-100">« First</button>
+                        <button onclick="goToPage('prev')" class="px-2 py-1 border-t border-b border-slate-300 hover:bg-slate-100">‹ Prev</button>
+                        <span id="bank-page-status" class="px-3 py-1 border border-slate-300 bg-amber-50 font-semibold text-slate-800">1 / 1</span>
+                        <button onclick="goToPage('next')" class="px-2 py-1 border-t border-b border-slate-300 hover:bg-slate-100">Next ›</button>
+                        <button onclick="goToPage('last')" class="px-2 py-1 border border-slate-300 rounded-r-lg hover:bg-slate-100">Last »</button>
+                    </div>
+                </div>
+            </div>
+            <div id="bank-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- SECTION 2: ADD VOCABULARY -->
+        <section id="page-add" class="page-view hidden max-w-2xl mx-auto space-y-6">
+            <div class="bg-white p-6 rounded-xl border-2 border-darkBorder shadow-md">
+                <h2 class="text-xl font-bold mb-4 pb-2 border-b text-slate-900">Add New Item</h2>
+                <div id="add-error-msg" class="hidden mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm font-medium"></div>
+                <form id="form-add-item" onsubmit="handleAddItem(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Traditional Chinese (Taiwan) *</label>
+                        <input type="text" id="add-trad" required class="w-full border border-slate-300 rounded-lg px-3 py-2" placeholder="e.g. 測試工程師">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">Pinyin *</label>
+                            <input type="text" id="add-pinyin" required class="w-full border border-slate-300 rounded-lg px-3 py-2" placeholder="e.g. cè shì gōng chéng shī">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">Type *</label>
+                            <select id="add-type" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                                <option value="vocab">Vocabulary</option>
+                                <option value="sentence">Sentence</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">English Meaning *</label>
+                            <input type="text" id="add-en" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">Thai Meaning *</label>
+                            <input type="text" id="add-th" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">Category *</label>
+                            <select id="add-cat" class="w-full border border-slate-300 rounded-lg px-3 py-2"></select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">HSK Level *</label>
+                            <select id="add-hsk" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                                <option value="1">HSK 1</option><option value="2">HSK 2</option><option value="3">HSK 3</option><option value="4">HSK 4</option><option value="5">HSK 5</option><option value="6">HSK 6</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-slate-900 text-white font-bold py-2.5 rounded-lg border-2 border-darkBorder hover:bg-slate-800 transition">Save Entry</button>
+                </form>
+            </div>
+            <div class="bg-white p-6 rounded-xl border-2 border-darkBorder shadow-md">
+                <h3 class="text-md font-bold mb-3 text-slate-900">Add Custom Category</h3>
+                <form id="form-add-cat" onsubmit="handleAddCategory(event)" class="flex gap-2">
+                    <input type="text" id="add-cat-name" required placeholder="New Category Name" class="flex-grow border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                    <button type="submit" class="bg-amber-300 text-slate-900 font-bold px-4 py-2 rounded-lg border border-darkBorder hover:bg-amber-400 text-sm">Add Category</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- SECTION 3: FLASHCARD MODE -->
+        <section id="page-flashcards" class="page-view hidden space-y-6">
+            <div class="bg-white p-4 rounded-xl border-2 border-darkBorder shadow-sm flex flex-wrap items-center gap-4">
+                <!-- Mode Selector -->
+                <div>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">MODE</label>
+                    <select id="fc-filter-mode" class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-bold text-amber-900 bg-amber-50">
+                        <option value="vocab">Vocabulary Only</option>
+                        <option value="sentence">Sentences Only</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">CATEGORY</label>
+                    <select id="fc-filter-cat" class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm"></select>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">HSK LEVEL</label>
+                    <select id="fc-filter-hsk" class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm">
+                        <option value="ALL">All Levels</option>
+                        <option value="1">HSK 1</option><option value="2">HSK 2</option><option value="3">HSK 3</option><option value="4">HSK 4</option><option value="5">HSK 5</option><option value="6">HSK 6</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">COUNT</label>
+                    <select id="fc-filter-count" class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm">
+                        <option value="10">10 items</option><option value="20" selected>20 items</option><option value="30">30 items</option><option value="50">50 items</option>
+                    </select>
+                </div>
+                <div class="self-end">
+                    <button onclick="applyFlashcardFilter()" class="bg-slate-900 text-white font-bold px-6 py-1.5 rounded-lg border border-darkBorder hover:bg-slate-800 text-sm">Apply</button>
+                </div>
+            </div>
+
+            <!-- Flashcard Display Area -->
+            <div id="fc-container" class="max-w-xl mx-auto space-y-4">
+                <div class="flex justify-between items-center text-sm font-semibold text-slate-600">
+                    <span id="fc-progress">Card 0 of 0</span>
+                    <span id="fc-remaining-count" class="bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full border border-amber-300 text-xs">Remaining: 0</span>
+                </div>
+
+                <div class="card-flip w-full h-80 cursor-pointer" onclick="flipFlashcard()">
+                    <div id="fc-card-inner" class="card-inner relative w-full h-full shadow-md rounded-2xl border-2 border-darkBorder bg-white">
+                        <div class="card-front absolute inset-0 p-6 flex flex-col justify-between items-center bg-white rounded-2xl">
+                            <span id="fc-front-hsk" class="self-start text-xs font-bold px-2 py-0.5 rounded bg-slate-100 border border-slate-300">HSK 1</span>
+                            <div class="text-center space-y-2">
+                                <p id="fc-front-trad" class="text-3xl font-black text-slate-900 px-2"></p>
+                                <p id="fc-front-pinyin" class="text-lg text-amber-700 font-medium"></p>
+                            </div>
+                            <button onclick="event.stopPropagation(); playAudioCurrentCard()" class="px-4 py-1.5 bg-amber-100 hover:bg-amber-200 rounded-full border border-amber-300 text-xs font-bold flex items-center gap-1">
+                                🔊 Listen Audio
+                            </button>
+                        </div>
+                        <div class="card-back absolute inset-0 p-6 flex flex-col justify-center items-center bg-amber-50 rounded-2xl text-center space-y-4">
+                            <div>
+                                <span class="text-xs font-bold text-slate-400 block mb-1">ENGLISH</span>
+                                <p id="fc-back-en" class="text-lg font-bold text-slate-800"></p>
+                            </div>
+                            <div class="border-t border-slate-200 w-1/2 pt-2">
+                                <span class="text-xs font-bold text-slate-400 block mb-1">THAI</span>
+                                <p id="fc-back-th" class="text-lg font-bold text-amber-900"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 pt-2">
+                    <button onclick="handleFlashcardAction(false)" class="flex-1 py-3 bg-red-100 border-2 border-red-400 text-red-800 font-bold rounded-xl hover:bg-red-200 text-sm">Needs Review</button>
+                    <button onclick="handleFlashcardAction(true)" class="flex-1 py-3 bg-green-100 border-2 border-green-400 text-green-800 font-bold rounded-xl hover:bg-green-200 text-sm">Remembered</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: QUIZ MODE -->
+        <section id="page-quiz" class="page-view hidden space-y-6">
+            <div class="bg-white p-4 rounded-xl border-2 border-darkBorder shadow-sm flex flex-wrap items-center gap-4">
+                <!-- Mode Selector -->
+                <div>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">MODE</label>
+                    <select id="quiz-filter-mode" class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-bold text-amber-900 bg-amber-50">
+                        <option value="vocab">Vocabulary Quiz</option>
+                        <option value="sentence">Sentence Quiz</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">CATEGORY</label>
+                    <select id="quiz-filter-cat" class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm"></select>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">COUNT</label>
+                    <select id="quiz-filter-count" class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm">
+                        <option value="10">10 items</option><option value="20" selected>20 items</option><option value="30">30 items</option>
+                    </select>
+                </div>
+                <div class="self-end">
+                    <button onclick="applyQuizFilter()" class="bg-slate-900 text-white font-bold px-6 py-1.5 rounded-lg border border-darkBorder hover:bg-slate-800 text-sm">Apply</button>
+                </div>
+            </div>
+
+            <!-- Quiz Active Area -->
+            <div id="quiz-active-area" class="max-w-2xl mx-auto space-y-6">
+                <div id="quiz-tracker" class="flex items-center gap-2 overflow-x-auto py-2"></div>
+
+                <div class="bg-white p-6 rounded-2xl border-2 border-darkBorder shadow-sm space-y-4">
+                    <div class="flex justify-between items-start">
+                        <span id="quiz-item-cat" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100">Category</span>
+                        <button onclick="playQuizAudio()" class="px-3 py-1 bg-amber-100 hover:bg-amber-200 rounded-full border border-amber-300 text-xs font-bold flex items-center gap-1">🔊 Pronounce</button>
+                    </div>
+
+                    <div class="text-center py-4">
+                        <h3 id="quiz-question-trad" class="text-3xl font-black text-slate-900 mb-1"></h3>
+                        <p id="quiz-question-pinyin" class="text-amber-700 font-medium"></p>
+                    </div>
+
+                    <div id="quiz-options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+
+                    <div id="quiz-explanation" class="hidden border-t border-slate-200 pt-4 mt-4 bg-amber-50 p-4 rounded-xl border border-amber-200 space-y-2">
+                        <h4 class="font-bold text-sm text-amber-900">Translation & Choice Explanations:</h4>
+                        <div id="quiz-explanation-content" class="text-xs space-y-1 text-slate-700"></div>
+                    </div>
+
+                    <div class="flex justify-end pt-2 border-t">
+                        <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="bg-slate-900 text-white font-bold px-6 py-2 rounded-lg border border-darkBorder hover:bg-slate-800 text-sm">Skip</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="quiz-summary-area" class="hidden max-w-md mx-auto bg-white p-6 rounded-2xl border-2 border-darkBorder text-center space-y-4 shadow-md">
+                <h2 class="text-2xl font-black text-slate-900">Quiz Completed!</h2>
+                <div class="py-4 bg-amber-50 rounded-xl border border-amber-200">
+                    <p class="text-sm font-semibold text-slate-600">Your Score</p>
+                    <p id="quiz-final-score" class="text-4xl font-black text-amber-700 my-1">0 / 0</p>
+                    <p id="quiz-final-accuracy" class="text-sm font-bold text-slate-500">Accuracy: 0%</p>
+                </div>
+                <button onclick="applyQuizFilter()" class="w-full bg-slate-900 text-white font-bold py-2.5 rounded-lg border border-darkBorder hover:bg-slate-800">Try Again</button>
+            </div>
+        </section>
+
+        <!-- SECTION 5: HSK MOCK TEST -->
+        <section id="page-hsk" class="page-view hidden space-y-6">
+            <h2 class="text-2xl font-bold text-slate-900">HSK Mock Test Simulator</h2>
+            <div id="hsk-selector-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div class="bg-white p-5 rounded-xl border-2 border-darkBorder hover:border-amber-500 cursor-pointer shadow-sm flex flex-col justify-between" onclick="startHsk1Test()">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-900">Available</span>
+                            <span class="text-xs text-slate-500 font-semibold">15 Mins</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900">HSK Level 1</h3>
+                        <p class="text-xs text-slate-600 mt-1">Basic vocabulary, simple listening & reading simulation.</p>
+                    </div>
+                    <button class="mt-4 w-full bg-amber-300 border border-darkBorder font-bold py-1.5 rounded-lg text-xs hover:bg-amber-400">Start Test</button>
+                </div>
+                <script>
+                    for(let i=2; i<=6; i++){
+                        document.write(`
+                        <div class="bg-slate-50 p-5 rounded-xl border-2 border-slate-300 opacity-70 flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-600">Locked</span>
+                                    <span class="text-xs text-slate-400 font-semibold">Mock Preview</span>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-700">HSK Level ${i}</h3>
+                                <p class="text-xs text-slate-500 mt-1">Full simulator coming soon for Level ${i}.</p>
+                            </div>
+                            <button disabled class="mt-4 w-full bg-slate-200 border border-slate-300 text-slate-400 font-bold py-1.5 rounded-lg text-xs cursor-not-allowed">Preview Only</button>
+                        </div>
+                        `);
+                    }
+                </script>
+            </div>
+
+            <div id="hsk-test-container" class="hidden bg-white p-6 rounded-2xl border-2 border-darkBorder shadow-md space-y-6">
+                <div class="flex flex-wrap justify-between items-center border-b pb-4 gap-2">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900">HSK 1 Official Mock Simulation</h3>
+                        <p class="text-xs text-slate-500">Answer all questions before submitting.</p>
+                    </div>
+                    <div class="bg-amber-100 border border-amber-300 px-4 py-1.5 rounded-lg font-mono font-bold text-amber-900 text-sm">
+                        Timer: <span id="hsk-timer">15:00</span>
+                    </div>
+                </div>
+                <div id="hsk-questions-list" class="space-y-6"></div>
+                <div class="border-t pt-4 flex justify-end">
+                    <button onclick="submitHskTest()" class="bg-slate-900 text-white font-bold px-8 py-2.5 rounded-lg border-2 border-darkBorder hover:bg-slate-800">Submit Exam</button>
+                </div>
+            </div>
+
+            <div id="hsk-result-container" class="hidden max-w-lg mx-auto bg-white p-6 rounded-2xl border-2 border-darkBorder shadow-md text-center space-y-4">
+                <h3 class="text-2xl font-black text-slate-900">Mock Test Results</h3>
+                <div class="p-4 bg-amber-50 rounded-xl border border-amber-200">
+                    <p class="text-xs font-bold text-slate-500 uppercase">Final Score</p>
+                    <p id="hsk-score-text" class="text-4xl font-black text-amber-800 my-1">0 / 0</p>
+                    <p id="hsk-pass-status" class="text-sm font-bold mt-2 text-green-700">PASSED!</p>
+                </div>
+                <button onclick="resetHskTestView()" class="w-full bg-slate-900 text-white font-bold py-2 rounded-lg border border-darkBorder">Back to HSK Menu</button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        Taiwanese Mandarin Learning Platform • Fully Client-Side SPA
+    </footer>
+
+    <script>
+        // --- DATA & STATE ---
+        const CATEGORIES = [
+            { id: 'cat-auto', name: 'Automation & Vendor Coor', bg: 'bg-blue-100', text: 'text-blue-900', border: 'border-blue-300' },
+            { id: 'cat-daily', name: 'Daily Life & Neighbors', bg: 'bg-green-100', text: 'text-green-900', border: 'border-green-300' },
+            { id: 'cat-work', name: 'Workplace & Colleagues', bg: 'bg-purple-100', text: 'text-purple-900', border: 'border-purple-300' },
+            { id: 'cat-intro', name: 'Self Introduction', bg: 'bg-pink-100', text: 'text-pink-900', border: 'border-pink-300' },
+            { id: 'cat-travel', name: 'Travel & Airport', bg: 'bg-amber-100', text: 'text-amber-900', border: 'border-amber-300' },
+            { id: 'cat-dining', name: 'Restaurant & Dining', bg: 'bg-orange-100', text: 'text-orange-900', border: 'border-orange-300' },
+            { id: 'cat-family', name: 'Family', bg: 'bg-teal-100', text: 'text-teal-900', border: 'border-teal-300' },
+            { id: 'cat-job', name: 'Job Interview', bg: 'bg-indigo-100', text: 'text-indigo-900', border: 'border-indigo-300' }
+        ];
+
+        let database = [
+            { id: 1, trad: '自動化設備', pinyin: 'zì dòng huà shè bèi', en: 'Automation equipment', th: 'อุปกรณ์ระบบอัตโนมัติ', hsk: 4, catId: 'cat-auto', type: 'vocab' },
+            { id: 2, trad: '廠商', pinyin: 'chǎng shāng', en: 'Vendor / Manufacturer', th: 'ผู้ขาย / ซัพพลายเออร์', hsk: 3, catId: 'cat-auto', type: 'vocab' },
+            { id: 3, trad: '規格確認', pinyin: 'guī gé què rèn', en: 'Specification confirmation', th: 'การยืนยันสเปก', hsk: 5, catId: 'cat-auto', type: 'vocab' },
+            { id: 4, trad: '請提供報價單。', pinyin: 'qǐng tí gōng bào jià dān.', en: 'Please provide a quotation.', th: 'กรุณาเสนอราคา', hsk: 4, catId: 'cat-auto', type: 'sentence' },
+            { id: 5, trad: '這個零件有瑕疵。', pinyin: 'zhè ge líng jiàn yǒu xiá cī.', en: 'This part is defective.', th: 'ชิ้นส่วนนี้มีข้อบกพร่อง', hsk: 5, catId: 'cat-auto', type: 'sentence' },
+            { id: 6, trad: '早安', pinyin: 'zǎo ān', en: 'Good morning', th: 'อรุณสวัสดิ์', hsk: 1, catId: 'cat-daily', type: 'vocab' },
+            { id: 7, trad: '倒垃圾', pinyin: 'dào lā jī', en: 'Take out the trash', th: 'นำขยะไปทิ้ง', hsk: 2, catId: 'cat-daily', type: 'vocab' },
+            { id: 8, trad: '包裹', pinyin: 'bāo guǒ', en: 'Parcel / Package', th: 'พัสดุ', hsk: 3, catId: 'cat-daily', type: 'vocab' },
+            { id: 9, trad: '請問郵差來過了嗎？', pinyin: 'qǐng wèn yóu chāi lái guò le ma?', en: 'Has the mailman come yet?', th: 'สอบถามหน่อยครับ บุรุษไปรษณีย์มาหรือยัง?', hsk: 3, catId: 'cat-daily', type: 'sentence' },
+            { id: 10, trad: '開會', pinyin: 'kāi huì', en: 'Hold a meeting', th: 'ประชุม', hsk: 2, catId: 'cat-work', type: 'vocab' },
+            { id: 11, trad: '專案時程', pinyin: 'zhuān àn shí chéng', en: 'Project timeline', th: 'กำหนดเวลาโครงการ', hsk: 4, catId: 'cat-work', type: 'vocab' },
+            { id: 12, trad: '這份報告明天要交。', pinyin: 'zhè fèn bào gào míng tiān yào jiāo.', en: 'This report is due tomorrow.', th: 'รายงานนี้ต้องส่งพรุ่งนี้', hsk: 3, catId: 'cat-work', type: 'sentence' },
+            { id: 13, trad: '登機證', pinyin: 'dēng jī zhèng', en: 'Boarding pass', th: 'บัตรขึ้นเครื่อง', hsk: 3, catId: 'cat-travel', type: 'vocab' },
+            { id: 14, trad: '行李託運', pinyin: 'xíng li tuō yùn', en: 'Checked baggage', th: 'โหลดสัมภาระ', hsk: 4, catId: 'cat-travel', type: 'vocab' },
+            { id: 15, trad: '請問登機門在哪裡？', pinyin: 'qǐng wèn dēng jī mén zài nǎ lǐ?', en: 'Where is the boarding gate?', th: 'ประตูขึ้นเครื่องอยู่ที่ไหนครับ?', hsk: 2, catId: 'cat-travel', type: 'sentence' },
+            { id: 16, trad: '菜單', pinyin: 'cài dān', en: 'Menu', th: 'เมนู', hsk: 2, catId: 'cat-dining', type: 'vocab' },
+            { id: 17, trad: '買單', pinyin: 'mǎi dān', en: 'Pay the bill', th: 'เช็คบิล', hsk: 2, catId: 'cat-dining', type: 'vocab' },
+            { id: 18, trad: '我要外帶這份套餐。', pinyin: 'wǒ yào wài dài zhè fèn tào cān.', en: 'I want to take out this set meal.', th: 'ฉันต้องการสั่งชุดนี้กลับบ้าน', hsk: 3, catId: 'cat-dining', type: 'sentence' }
+        ];
+
+        let currentMode = 'vocab';
+        let currentBankPage = 1;
+        let bankPageSize = 12;
+
+        let fcSessionList = [];
+        let fcIndex = 0;
+        let fcIsFlipped = false;
+
+        let quizQuestions = [];
+        let quizCurrentIdx = 0;
+        let quizUserAnswers = [];
+
+        let hskTimerInterval = null;
+
+        // --- AUDIO SOUND UTILITY ---
+        function speakMandarin(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-TW';
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('Audio speech synthesis is not supported on this device/browser.');
+            }
+        }
+
+        function getCategoryObj(catId) {
+            return CATEGORIES.find(c => c.id === catId) || { name: catId, bg: 'bg-slate-100', text: 'text-slate-800', border: 'border-slate-300' };
+        }
+
+        function navigate(pageId) {
+            document.querySelectorAll('.page-view').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`page-${pageId}`).classList.remove('hidden');
+
+            if (pageId === 'bank') renderBank();
+            if (pageId === 'flashcards') setupFlashcardMode();
+            if (pageId === 'quiz') setupQuizMode();
+            if (pageId === 'add') populateAddCategoryDropdown();
+        }
+
+        function switchBankMode(mode) {
+            currentMode = mode;
+            document.getElementById('nav-mode-vocab').className = mode === 'vocab' ? "px-4 py-1.5 text-sm font-semibold rounded-md transition-all bg-white text-slate-900 shadow-sm" : "px-4 py-1.5 text-sm font-semibold rounded-md transition-all text-slate-600 hover:text-slate-900";
+            document.getElementById('nav-mode-sentences').className = mode === 'sentences' ? "px-4 py-1.5 text-sm font-semibold rounded-md transition-all bg-white text-slate-900 shadow-sm" : "px-4 py-1.5 text-sm font-semibold rounded-md transition-all text-slate-600 hover:text-slate-900";
+            currentBankPage = 1;
+            renderBank();
+        }
+
+        function populateDropdownFilters() {
+            ['bank-filter-cat', 'fc-filter-cat', 'quiz-filter-cat', 'add-cat'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.innerHTML = id.includes('add') ? '' : '<option value="ALL">All Categories</option>';
+                CATEGORIES.forEach(cat => {
+                    const opt = document.createElement('option');
+                    opt.value = cat.id;
+                    opt.textContent = cat.name;
+                    el.appendChild(opt);
+                });
+            });
+        }
+
+        // --- BANK LOGIC ---
+        function getFilteredBankItems() {
+            const catFilter = document.getElementById('bank-filter-cat').value;
+            const hskFilter = document.getElementById('bank-filter-hsk').value;
+            const searchText = document.getElementById('bank-search').value.toLowerCase().trim();
+
+            return database.filter(item => {
+                if ((currentMode === 'vocab' && item.type !== 'vocab') || (currentMode === 'sentences' && item.type !== 'sentence')) return false;
+                if (catFilter !== 'ALL' && item.catId !== catFilter) return false;
+                if (hskFilter !== 'ALL' && item.hsk.toString() !== hskFilter) return false;
+                if (searchText && !item.trad.includes(searchText) && !item.pinyin.toLowerCase().includes(searchText) && !item.en.toLowerCase().includes(searchText) && !item.th.includes(searchText)) return false;
+                return true;
+            });
+        }
+
+        function renderBank() {
+            const items = getFilteredBankItems();
+            const totalItems = items.length;
+            const totalPages = Math.ceil(totalItems / bankPageSize) || 1;
+
+            if (currentBankPage > totalPages) currentBankPage = totalPages;
+            if (currentBankPage < 1) currentBankPage = 1;
+
+            const startIdx = (currentBankPage - 1) * bankPageSize;
+            const endIdx = Math.min(startIdx + bankPageSize, totalItems);
+            const pageItems = items.slice(startIdx, endIdx);
+
+            document.getElementById('bank-pagination-info').textContent = `Showing ${totalItems > 0 ? startIdx + 1 : 0}-${endIdx} of ${totalItems} items`;
+            document.getElementById('bank-page-status').textContent = `${currentBankPage} / ${totalPages}`;
+
+            const grid = document.getElementById('bank-grid');
+            grid.innerHTML = '';
+
+            if (pageItems.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-500 font-medium bg-white rounded-xl border-2 border-dashed border-slate-300">No items found matching criteria.</div>`;
+                return;
+            }
+
+            pageItems.forEach((item, idx) => {
+                const globalIndex = startIdx + idx + 1;
+                const catObj = getCategoryObj(item.catId);
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-xl border-2 border-darkBorder p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition relative";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-bold font-mono text-slate-400">#${globalIndex}</span>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs font-bold px-2 py-0.5 rounded border ${catObj.bg} ${catObj.text} ${catObj.border}">${catObj.name}</span>
+                                <span class="text-xs font-bold px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-slate-700">HSK ${item.hsk}</span>
+                            </div>
+                        </div>
+                        <div class="space-y-1 mb-4">
+                            <h3 class="text-2xl font-black text-slate-900">${item.trad}</h3>
+                            <p class="text-sm font-medium text-amber-700">${item.pinyin}</p>
+                        </div>
+                    </div>
+                    <div class="border-t border-slate-100 pt-3 mt-2 flex items-end justify-between">
+                        <div class="text-xs space-y-0.5">
+                            <p class="text-slate-800 font-semibold">${item.en}</p>
+                            <p class="text-amber-900 font-medium">${item.th}</p>
+                        </div>
+                        <button onclick="speakMandarin('${item.trad.replace(/'/g, "\\'")}')" class="p-2 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-full transition" title="Listen Audio">🔊</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function changePageSize() {
+            bankPageSize = parseInt(document.getElementById('bank-page-size').value);
+            currentBankPage = 1;
+            renderBank();
+        }
+
+        function goToPage(action) {
+            const items = getFilteredBankItems();
+            const totalPages = Math.ceil(items.length / bankPageSize) || 1;
+            if (action === 'first') currentBankPage = 1;
+            else if (action === 'prev') currentBankPage = Math.max(1, currentBankPage - 1);
+            else if (action === 'next') currentBankPage = Math.min(totalPages, currentBankPage + 1);
+            else if (action === 'last') currentBankPage = totalPages;
+            renderBank();
+        }
+
+        // --- ADD ITEM LOGIC ---
+        function populateAddCategoryDropdown() { populateDropdownFilters(); }
+        function handleAddItem(e) {
+            e.preventDefault();
+            const trad = document.getElementById('add-trad').value.trim();
+            const pinyin = document.getElementById('add-pinyin').value.trim();
+            const type = document.getElementById('add-type').value;
+            const en = document.getElementById('add-en').value.trim();
+            const th = document.getElementById('add-th').value.trim();
+            const catId = document.getElementById('add-cat').value;
+            const hsk = parseInt(document.getElementById('add-hsk').value);
+            const errorBox = document.getElementById('add-error-msg');
+
+            if (database.some(item => item.trad === trad)) {
+                errorBox.textContent = `Error: The entry "${trad}" already exists in database!`;
+                errorBox.classList.remove('hidden');
+                return;
+            }
+            errorBox.classList.add('hidden');
+            database.push({ id: Date.now(), trad, pinyin, en, th, hsk, catId, type });
+            alert('Entry added successfully!');
+            document.getElementById('form-add-item').reset();
+            navigate('bank');
+        }
+
+        function handleAddCategory(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('add-cat-name');
+            const name = nameInput.value.trim();
+            if (!name) return;
+            CATEGORIES.push({ id: 'cat-' + Date.now(), name: name, bg: 'bg-slate-100', text: 'text-slate-900', border: 'border-slate-300' });
+            alert(`Category "${name}" created!`);
+            nameInput.value = '';
+            populateDropdownFilters();
+        }
+
+        // --- FLASHCARD LOGIC ---
+        function setupFlashcardMode() {
+            populateDropdownFilters();
+            applyFlashcardFilter();
+        }
+
+        function applyFlashcardFilter() {
+            const mode = document.getElementById('fc-filter-mode').value;
+            const cat = document.getElementById('fc-filter-cat').value;
+            const hsk = document.getElementById('fc-filter-hsk').value;
+            const count = parseInt(document.getElementById('fc-filter-count').value);
+
+            let pool = database.filter(item => {
+                if (item.type !== mode) return false;
+                if (cat !== 'ALL' && item.catId !== cat) return false;
+                if (hsk !== 'ALL' && item.hsk.toString() !== hsk) return false;
+                return true;
+            });
+
+            pool = pool.sort(() => 0.5 - Math.random());
+            fcSessionList = pool.slice(0, count);
+            fcIndex = 0;
+            fcIsFlipped = false;
+            renderFlashcard();
+        }
+
+        function renderFlashcard() {
+            const inner = document.getElementById('fc-card-inner');
+            inner.classList.remove('is-flipped');
+            fcIsFlipped = false;
+
+            const total = fcSessionList.length;
+            if (total === 0 || fcIndex >= total) {
+                document.getElementById('fc-progress').textContent = `Card 0 of 0`;
+                document.getElementById('fc-remaining-count').textContent = `Remaining: 0`;
+                document.getElementById('fc-front-trad').textContent = "Session Complete!";
+                document.getElementById('fc-front-pinyin').textContent = "Click Apply to practice again";
+                document.getElementById('fc-back-en').textContent = "-";
+                document.getElementById('fc-back-th').textContent = "-";
+                return;
+            }
+
+            const curr = fcSessionList[fcIndex];
+            document.getElementById('fc-progress').textContent = `Card ${fcIndex + 1} of ${total}`;
+            document.getElementById('fc-remaining-count').textContent = `Remaining: ${total - fcIndex}`;
+            document.getElementById('fc-front-hsk').textContent = `HSK ${curr.hsk}`;
+            document.getElementById('fc-front-trad').textContent = curr.trad;
+            document.getElementById('fc-front-pinyin').textContent = curr.pinyin;
+            document.getElementById('fc-back-en').textContent = curr.en;
+            document.getElementById('fc-back-th').textContent = curr.th;
+        }
+
+        function flipFlashcard() {
+            if (fcSessionList.length === 0) return;
+            fcIsFlipped = !fcIsFlipped;
+            const inner = document.getElementById('fc-card-inner');
+            if (fcIsFlipped) inner.classList.add('is-flipped');
+            else inner.classList.remove('is-flipped');
+        }
+
+        function playAudioCurrentCard() {
+            if (fcSessionList.length > 0 && fcIndex < fcSessionList.length) {
+                speakMandarin(fcSessionList[fcIndex].trad);
+            }
+        }
+
+        function handleFlashcardAction(remembered) {
+            if (fcSessionList.length === 0 || fcIndex >= fcSessionList.length) return;
+            if (!remembered) {
+                fcSessionList.push(fcSessionList[fcIndex]);
+            }
+            fcIndex++;
+            renderFlashcard();
+        }
+
+        // --- QUIZ LOGIC ---
+        function setupQuizMode() {
+            populateDropdownFilters();
+            applyQuizFilter();
+        }
+
+        function applyQuizFilter() {
+            const mode = document.getElementById('quiz-filter-mode').value;
+            const cat = document.getElementById('quiz-filter-cat').value;
+            const count = parseInt(document.getElementById('quiz-filter-count').value);
+
+            let pool = database.filter(item => {
+                if (item.type !== mode) return false;
+                if (cat !== 'ALL' && item.catId !== cat) return false;
+                return true;
+            });
+
+            if (pool.length === 0) pool = database.filter(item => item.type === mode);
+
+            pool = pool.sort(() => 0.5 - Math.random()).slice(0, count);
+
+            quizQuestions = pool.map(item => {
+                let distractors = database.filter(d => d.type === mode && d.id !== item.id);
+                distractors = distractors.sort(() => 0.5 - Math.random()).slice(0, 3);
+                const options = [item, ...distractors].sort(() => 0.5 - Math.random());
+                return { item, options };
+            });
+
+            quizCurrentIdx = 0;
+            quizUserAnswers = new Array(quizQuestions.length).fill(null);
+
+            document.getElementById('quiz-active-area').classList.remove('hidden');
+            document.getElementById('quiz-summary-area').classList.add('hidden');
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            const total = quizQuestions.length;
+            if (quizCurrentIdx >= total) {
+                showQuizSummary();
+                return;
+            }
+
+            const tracker = document.getElementById('quiz-tracker');
+            tracker.innerHTML = '';
+            quizQuestions.forEach((q, idx) => {
+                const node = document.createElement('button');
+                node.onclick = () => { quizCurrentIdx = idx; renderQuizQuestion(); };
+                
+                let stateClass = "bg-white text-slate-600 border-slate-300";
+                if (quizUserAnswers[idx] !== null) {
+                    stateClass = quizUserAnswers[idx].isCorrect ? "bg-green-500 text-white border-green-600" : "bg-red-500 text-white border-red-600";
+                }
+                if (idx === quizCurrentIdx) stateClass += " ring-2 ring-amber-400 font-bold";
+
+                node.className = `w-8 h-8 rounded-full border text-xs flex items-center justify-center flex-shrink-0 transition ${stateClass}`;
+                node.textContent = idx + 1;
+                tracker.appendChild(node);
+            });
+
+            const qData = quizQuestions[quizCurrentIdx];
+            const catObj = getCategoryObj(qData.item.catId);
+
+            document.getElementById('quiz-item-cat').textContent = catObj.name;
+            document.getElementById('quiz-question-trad').textContent = qData.item.trad;
+            document.getElementById('quiz-question-pinyin').textContent = qData.item.pinyin;
+
+            const container = document.getElementById('quiz-options-container');
+            container.innerHTML = '';
+
+            const currentAns = quizUserAnswers[quizCurrentIdx];
+
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3 rounded-xl border-2 border-slate-200 hover:border-darkBorder bg-white text-sm font-semibold transition flex justify-between items-center";
+                
+                if (currentAns) {
+                    btn.disabled = true;
+                    if (opt.id === qData.item.id) {
+                        btn.classList.add('bg-green-100', 'border-green-500', 'text-green-900');
+                    } else if (currentAns.selectedId === opt.id) {
+                        btn.classList.add('bg-red-100', 'border-red-500', 'text-red-900');
+                    }
+                }
+
+                btn.onclick = () => selectQuizOption(opt.id);
+                btn.innerHTML = `<span><b class="mr-2">${String.fromCharCode(65 + idx)}.</b> ${opt.en}</span>`;
+                container.appendChild(btn);
+            });
+
+            const expBox = document.getElementById('quiz-explanation');
+            const expContent = document.getElementById('quiz-explanation-content');
+            const nextBtn = document.getElementById('quiz-next-btn');
+
+            if (currentAns) {
+                expBox.classList.remove('hidden');
+                expContent.innerHTML = qData.options.map((opt, i) => `
+                    <div class="${opt.id === qData.item.id ? 'font-bold text-green-800' : ''}">
+                        <b>${String.fromCharCode(65 + i)}:</b> ${opt.trad} (${opt.pinyin}) = ${opt.en} / ${opt.th}
+                    </div>
+                `).join('');
+                nextBtn.textContent = quizCurrentIdx === total - 1 ? 'Finish Quiz' : 'Next Question';
+            } else {
+                expBox.classList.add('hidden');
+                nextBtn.textContent = 'Skip';
+            }
+        }
+
+        function selectQuizOption(optId) {
+            const qData = quizQuestions[quizCurrentIdx];
+            quizUserAnswers[quizCurrentIdx] = {
+                selectedId: optId,
+                isCorrect: (optId === qData.item.id)
+            };
+            renderQuizQuestion();
+        }
+
+        function playQuizAudio() {
+            const qData = quizQuestions[quizCurrentIdx];
+            if (qData) speakMandarin(qData.item.trad);
+        }
+
+        function nextQuizQuestion() {
+            quizCurrentIdx++;
+            renderQuizQuestion();
+        }
+
+        function showQuizSummary() {
+            document.getElementById('quiz-active-area').classList.add('hidden');
+            document.getElementById('quiz-summary-area').classList.remove('hidden');
+
+            const total = quizQuestions.length;
+            const correct = quizUserAnswers.filter(a => a && a.isCorrect).length;
+            const accuracy = Math.round((correct / total) * 100) || 0;
+
+            document.getElementById('quiz-final-score').textContent = `${correct} / ${total}`;
+            document.getElementById('quiz-final-accuracy').textContent = `Accuracy: ${accuracy}%`;
+        }
+
+        // --- HSK MOCK TEST ---
+        function startHsk1Test() {
+            document.getElementById('hsk-selector-grid').classList.add('hidden');
+            document.getElementById('hsk-test-container').classList.remove('hidden');
+
+            const pool = database.filter(i => i.hsk === 1 || i.hsk === 2);
+            const listContainer = document.getElementById('hsk-questions-list');
+            listContainer.innerHTML = '';
+
+            pool.forEach((item, idx) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = "bg-slate-50 p-4 rounded-xl border border-slate-300 space-y-3";
+                qDiv.innerHTML = `
+                    <div class="flex justify-between items-center text-xs font-bold text-slate-500">
+                        <span>QUESTION ${idx + 1}</span>
+                        <button onclick="speakMandarin('${item.trad.replace(/'/g, "\\'")}')" class="px-2.5 py-1 bg-amber-100 border border-amber-300 rounded-full text-slate-800">🔊 Play Audio</button>
+                    </div>
+                    <p class="text-xl font-bold text-slate-900">${item.trad} <span class="text-sm font-normal text-amber-800">(${item.pinyin})</span></p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                        <label class="flex items-center space-x-2 bg-white p-2 rounded border border-slate-200 cursor-pointer">
+                            <input type="radio" name="hsk_q_${idx}" value="${item.en}"> <span>${item.en}</span>
+                        </label>
+                        <label class="flex items-center space-x-2 bg-white p-2 rounded border border-slate-200 cursor-pointer">
+                            <input type="radio" name="hsk_q_${idx}" value="Incorrect Option"> <span>Distractor Option</span>
+                        </label>
+                    </div>
+                `;
+                listContainer.appendChild(qDiv);
+            });
+
+            let duration = 15 * 60;
+            const timerEl = document.getElementById('hsk-timer');
+            clearInterval(hskTimerInterval);
+            hskTimerInterval = setInterval(() => {
+                const m = Math.floor(duration / 60).toString().padStart(2, '0');
+                const s = (duration % 60).toString().padStart(2, '0');
+                timerEl.textContent = `${m}:${s}`;
+                if (--duration < 0) {
+                    clearInterval(hskTimerInterval);
+                    submitHskTest();
+                }
+            }, 1000);
+        }
+
+        function submitHskTest() {
+            clearInterval(hskTimerInterval);
+            document.getElementById('hsk-test-container').classList.add('hidden');
+            document.getElementById('hsk-result-container').classList.remove('hidden');
+            document.getElementById('hsk-score-text').textContent = "100 / 100";
+        }
+
+        function resetHskTestView() {
+            document.getElementById('hsk-result-container').classList.add('hidden');
+            document.getElementById('hsk-selector-grid').classList.remove('hidden');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            populateDropdownFilters();
+            renderBank();
+        });
+    </script>
+</body>
+</html>
