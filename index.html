@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Taiwanese Mandarin Learning Platform</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -37,13 +36,13 @@
                 <span class="text-2xl font-black tracking-wider text-slate-900">臺語/華語 <span class="text-amber-600 text-sm font-normal">TW Mandarin</span></span>
             </div>
 
-            <!-- Global Mode Switcher for Bank -->
+            <!-- Global Mode Switcher -->
             <div class="bg-slate-100 p-1 rounded-lg border border-slate-300 flex space-x-1">
                 <button id="nav-mode-vocab" onclick="switchBankMode('vocab')" class="px-4 py-1.5 text-sm font-semibold rounded-md transition-all bg-white text-slate-900 shadow-sm">Vocabulary</button>
                 <button id="nav-mode-sentences" onclick="switchBankMode('sentences')" class="px-4 py-1.5 text-sm font-semibold rounded-md transition-all text-slate-600 hover:text-slate-900">Sentences</button>
             </div>
 
-            <!-- Right Nav Links -->
+            <!-- Nav Links -->
             <nav class="flex flex-wrap items-center gap-2 text-sm font-medium">
                 <button onclick="navigate('bank')" class="nav-btn px-3 py-1.5 rounded-lg border border-slate-300 hover:border-darkBorder hover:bg-amber-50 transition">Bank</button>
                 <button onclick="navigate('flashcards')" class="nav-btn px-3 py-1.5 rounded-lg border border-slate-300 hover:border-darkBorder hover:bg-amber-50 transition">Flashcards</button>
@@ -147,7 +146,6 @@
         <!-- SECTION 3: FLASHCARD MODE -->
         <section id="page-flashcards" class="page-view hidden space-y-6">
             <div class="bg-white p-4 rounded-xl border-2 border-darkBorder shadow-sm flex flex-wrap items-center gap-4">
-                <!-- Mode Selector -->
                 <div>
                     <label class="text-xs font-bold text-slate-500 block mb-1">MODE</label>
                     <select id="fc-filter-mode" class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-bold text-amber-900 bg-amber-50">
@@ -219,7 +217,6 @@
         <!-- SECTION 4: QUIZ MODE -->
         <section id="page-quiz" class="page-view hidden space-y-6">
             <div class="bg-white p-4 rounded-xl border-2 border-darkBorder shadow-sm flex flex-wrap items-center gap-4">
-                <!-- Mode Selector -->
                 <div>
                     <label class="text-xs font-bold text-slate-500 block mb-1">MODE</label>
                     <select id="quiz-filter-mode" class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-bold text-amber-900 bg-amber-50">
@@ -395,18 +392,62 @@
         let quizUserAnswers = [];
 
         let hskTimerInterval = null;
+        let globalAudioPlayer = new Audio();
 
-        // --- AUDIO SOUND UTILITY ---
+        // --- HYBRID AUDIO ENGINE (Local TTS + Online Fallback) ---
         function speakMandarin(text) {
+            if (!text) return;
+
+            // 1. ลองใช้ออฟไลน์ Web Speech API ก่อน
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
+                
+                const voices = window.speechSynthesis.getVoices();
+                const twVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'zh_TW') 
+                             || voices.find(v => v.lang.startsWith('zh'));
+
+                if (twVoice) {
+                    utterance.voice = twVoice;
+                }
+
                 utterance.lang = 'zh-TW';
                 utterance.rate = 0.85;
+
+                let isSpoken = false;
+                utterance.onstart = () => { isSpoken = true; };
+
                 window.speechSynthesis.speak(utterance);
+
+                // 2. ถ้า iOS เงียบ/ไม่ยอมออกเสียงภายใน 300ms ให้เปิดเล่นผ่าน Online Audio Engine ทันที
+                setTimeout(() => {
+                    if (!isSpoken) {
+                        playOnlineAudioFallback(text);
+                    }
+                }, 300);
             } else {
-                alert('Audio speech synthesis is not supported on this device/browser.');
+                playOnlineAudioFallback(text);
             }
+        }
+
+        function playOnlineAudioFallback(text) {
+            try {
+                const encodedText = encodeURIComponent(text);
+                const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=zh-TW&client=tw-ob`;
+                globalAudioPlayer.src = audioUrl;
+                globalAudioPlayer.play().catch(e => {
+                    console.log("Audio Playback Error:", e);
+                });
+            } catch(err) {
+                console.error("Audio error", err);
+            }
+        }
+
+        // โหลดเสียงเตรียมไว้สำหรับ Safari / Chrome
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                window.speechSynthesis.getVoices();
+            };
         }
 
         function getCategoryObj(catId) {
