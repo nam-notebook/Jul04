@@ -73,7 +73,7 @@
                 <div class="flex flex-wrap items-center justify-center lg:justify-end gap-3 w-full lg:w-auto text-sm border-t lg:border-t-0 pt-3 lg:pt-0">
                     <span id="bank-pagination-info" class="text-slate-600 font-medium">Showing 0-0 of 0 items</span>
                     <select id="bank-page-size" onchange="changePageSize()" class="border border-slate-300 rounded-lg px-2 py-1 text-sm bg-white">
-                        <option value="12">12 items / page</option><option value="24">24 items / page</option><option value="48">48 items / page</option>
+                        <option value="12">12 items / page</option><option value="24" selected>24 items / page</option><option value="48">48 items / page</option>
                     </select>
                     <div class="inline-flex rounded-md shadow-sm">
                         <button onclick="goToPage('first')" class="px-2 py-1 border border-slate-300 rounded-l-lg hover:bg-slate-100">« First</button>
@@ -339,23 +339,214 @@
         ];
 
         let database = [
-            { id: 1, trad: '自動化設備', pinyin: 'zì dòng huà shè bèi', en: 'Automation equipment', th: 'อุปกรณ์ระบบอัตโนมัติ', hsk: 4, catId: 'cat-auto', type: 'vocab' },
-            { id: 2, trad: '廠商', pinyin: 'chǎng shāng', en: 'Vendor / Manufacturer', th: 'ผู้ขาย / ซัพพลายเออร์', hsk: 3, catId: 'cat-auto', type: 'vocab' },
-            { id: 3, trad: '規格確認', pinyin: 'guī gé què rèn', en: 'Specification confirmation', th: 'การยืนยันสเปก', hsk: 5, catId: 'cat-auto', type: 'vocab' },
-            { id: 4, trad: '請提供報價單。', pinyin: 'qǐng tí gōng bào jià dān.', en: 'Please provide a quotation.', th: 'กรุณาเสนอราคา', hsk: 4, catId: 'cat-auto', type: 'sentence' },
-            { id: 5, trad: '這個零件有瑕疵。', pinyin: 'zhè ge líng jiàn yǒu xiá cī.', en: 'This part is defective.', th: 'ชิ้นส่วนนี้มีข้อบกพร่อง', hsk: 5, catId: 'cat-auto', type: 'sentence' },
-            { id: 6, trad: '早安', pinyin: 'zǎo ān', en: 'Good morning', th: 'อรุณสวัสดิ์', hsk: 1, catId: 'cat-daily', type: 'vocab' },
-            { id: 7, trad: '倒垃圾', pinyin: 'dào lā jī', en: 'Take out the trash', th: 'นำขยะไปทิ้ง', hsk: 2, catId: 'cat-daily', type: 'vocab' },
-            { id: 8, trad: '包裹', pinyin: 'bāo guǒ', en: 'Parcel / Package', th: 'พัสดุ', hsk: 3, catId: 'cat-daily', type: 'vocab' },
-            { id: 9, trad: '請問郵差來過了嗎？', pinyin: 'qǐng wèn yóu chāi lái guò le ma?', en: 'Has the mailman come yet?', th: 'สอบถามหน่อยครับ บุรุษไปรษณีย์มาหรือยัง?', hsk: 3, catId: 'cat-daily', type: 'sentence' },
-            { id: 10, trad: '開會', pinyin: 'kāi huì', en: 'Hold a meeting', th: 'ประชุม', hsk: 2, catId: 'cat-work', type: 'vocab' },
-            { id: 11, trad: '專案時程', pinyin: 'zhuān àn shí chéng', en: 'Project timeline', th: 'กำหนดเวลาโครงการ', hsk: 4, catId: 'cat-work', type: 'vocab' },
-            { id: 12, trad: '這份報告明天要交。', pinyin: 'zhè fèn bào gào míng tiān yào jiāo.', en: 'This report is due tomorrow.', th: 'รายงานนี้ต้องส่งพรุ่งนี้', hsk: 3, catId: 'cat-work', type: 'sentence' }
+            // ==================== 1. AUTOMATION & VENDOR COOR (30 Items) ====================
+            // Vocab (1-20)
+            { id: 101, trad: '自動化設備', pinyin: 'zì dòng huà shè bèi', en: 'Automation equipment', th: 'อุปกรณ์ระบบอัตโนมัติ', hsk: 4, catId: 'cat-auto', type: 'vocab' },
+            { id: 102, trad: '廠商', pinyin: 'chǎng shāng', en: 'Vendor / Supplier', th: 'ผู้ขาย / ซัพพลายเออร์', hsk: 3, catId: 'cat-auto', type: 'vocab' },
+            { id: 103, trad: '規格確認', pinyin: 'guī gé què rèn', en: 'Specification confirmation', th: 'การยืนยันสเปก', hsk: 5, catId: 'cat-auto', type: 'vocab' },
+            { id: 104, trad: '零件', pinyin: 'líng jiàn', en: 'Spare parts / Components', th: 'ชิ้นส่วน / อะไหล่', hsk: 4, catId: 'cat-auto', type: 'vocab' },
+            { id: 105, trad: '感應器', pinyin: 'gǎn yìng qì', en: 'Sensor', th: 'เซนเซอร์', hsk: 5, catId: 'cat-auto', type: 'vocab' },
+            { id: 106, trad: '機械手臂', pinyin: 'jī xiè shǒu bì', en: 'Robotic arm', th: 'แขนกล', hsk: 5, catId: 'cat-auto', type: 'vocab' },
+            { id: 107, trad: '控制板', pinyin: 'kòng zhì bǎn', en: 'Control board', th: 'แผงควบคุม', hsk: 4, catId: 'cat-auto', type: 'vocab' },
+            { id: 108, trad: '馬達', pinyin: 'mǎ dá', en: 'Motor', th: 'มอเตอร์', hsk: 4, catId: 'cat-auto', type: 'vocab' },
+            { id: 109, trad: '報價單', pinyin: 'bào jià dān', en: 'Quotation', th: 'ใบเสนอราคา', hsk: 4, catId: 'cat-auto', type: 'vocab' },
+            { id: 110, trad: '採購單', pinyin: 'cǎi gòu dān', en: 'Purchase order (PO)', th: 'ใบสั่งซื้อ', hsk: 4, catId: 'cat-auto', type: 'vocab' },
+            { id: 111, trad: '交貨期', pinyin: 'jiāo huò qī', en: 'Delivery lead time', th: 'กำหนดส่งมอบสินค้า', hsk: 4, catId: 'cat-auto', type: 'vocab' },
+            { id: 112, trad: '瑕疵', pinyin: 'xiá cī', en: 'Defect / Fault', th: 'ข้อบกพร่อง / ตำหนิ', hsk: 5, catId: 'cat-auto', type: 'vocab' },
+            { id: 113, trad: '維修', pinyin: 'wéi xiū', en: 'Maintenance / Repair', th: 'ซ่อมบำรุง', hsk: 4, catId: 'cat-auto', type: 'vocab' },
+            { id: 114, trad: '校正', pinyin: 'jiào zhèng', en: 'Calibration', th: 'การปรับจูน / คาลิเบรต', hsk: 5, catId: 'cat-auto', type: 'vocab' },
+            { id: 115, trad: '安裝', pinyin: 'ān zhuāng', en: 'Installation', th: 'การติดตั้ง', hsk: 4, catId: 'cat-auto', type: 'vocab' },
+            { id: 116, trad: '試運行', pinyin: 'shì yùn xíng', en: 'Trial run / Test run', th: 'การทดสอบระบบ', hsk: 5, catId: 'cat-auto', type: 'vocab' },
+            { id: 117, trad: '保固期', pinyin: 'bǎo gù qī', en: 'Warranty period', th: 'ระยะเวลารับประกัน', hsk: 4, catId: 'cat-auto', type: 'vocab' },
+            { id: 118, trad: '技術支援', pinyin: 'jì shù zhī yuán', en: 'Technical support', th: 'การสนับสนุนทางเทคนิค', hsk: 5, catId: 'cat-auto', type: 'vocab' },
+            { id: 119, trad: '生產線', pinyin: 'shēng chǎn xiàn', en: 'Production line', th: 'สายการผลิต', hsk: 4, catId: 'cat-auto', type: 'vocab' },
+            { id: 120, trad: '異常', pinyin: 'yì cháng', en: 'Abnormality / Error', th: 'สิ่งผิดปกติ / ข้อผิดพลาด', hsk: 4, catId: 'cat-auto', type: 'vocab' },
+            // Sentences (21-30)
+            { id: 121, trad: '請提供最新的報價單。', pinyin: 'qǐng tí gōng zuì xīn de bào jià dān.', en: 'Please provide the latest quotation.', th: 'กรุณาขอใบเสนอราคาล่าสุดด้วยครับ', hsk: 4, catId: 'cat-auto', type: 'sentence' },
+            { id: 122, trad: '這個零件有瑕疵，請更換。', pinyin: 'zhè ge líng jiàn yǒu xiá cī, qǐng gēng huàn.', en: 'This part is defective, please replace it.', th: 'ชิ้นส่วนนี้มีตำหนิ กรุณาเปลี่ยนใหม่ครับ', hsk: 5, catId: 'cat-auto', type: 'sentence' },
+            { id: 123, trad: '請問設備交貨期需要多久？', pinyin: 'qǐng wèn shè bèi jiāo huò qī xū yào duō jiǔ?', en: 'How long is the delivery lead time for the equipment?', th: 'ระยะเวลาจัดส่งเครื่องจักรใช้เวลานานเท่าไหร่ครับ?', hsk: 4, catId: 'cat-auto', type: 'sentence' },
+            { id: 124, trad: '我們會安排工程師前往檢修。', pinyin: 'wǒ men huì ān pái gōng chéng shī qián wǎng jiǎn xiū.', en: 'We will arrange an engineer to inspect and repair.', th: 'พวกเราจะจัดส่งวิศวกรไปตรวจสอบและซ่อมบำรุงครับ', hsk: 5, catId: 'cat-auto', type: 'sentence' },
+            { id: 125, trad: '請確認這份規格書是否正確。', pinyin: 'qǐng què rèn zhè fèn guī gé shū shì fǒu zhèng què.', en: 'Please confirm if this specification sheet is correct.', th: 'กรุณายืนยันว่าเอกสารสเปกนี้ถูกต้องหรือไม่', hsk: 5, catId: 'cat-auto', type: 'sentence' },
+            { id: 126, trad: '感應器好像發出了異常訊號。', pinyin: 'gǎn yìng qì hǎo xiàng fā chū le yì cháng xùn hào.', en: 'The sensor seems to be sending an abnormal signal.', th: 'ดูเหมือนว่าเซนเซอร์จะส่งสัญญาณผิดปกติออกมา', hsk: 5, catId: 'cat-auto', type: 'sentence' },
+            { id: 127, trad: '這台機器還在保固期內嗎？', pinyin: 'zhè tái jī qì hái zài bǎo gù qī nèi ma?', en: 'Is this machine still under warranty?', th: 'เครื่องนี้นังอยู่ในระยะเวลารับประกันไหมครับ?', hsk: 4, catId: 'cat-auto', type: 'sentence' },
+            { id: 128, trad: '明天我們要進行生產線試運行。', pinyin: 'míng tiān wǒ men yào jìn xíng shēng chǎn xiàn shì yùn xíng.', en: 'Tomorrow we will conduct a production line trial run.', th: 'พรุ่งนี้พวกเราจะทำการทดสอบระบบสายการผลิต', hsk: 5, catId: 'cat-auto', type: 'sentence' },
+            { id: 129, trad: '請幫我們調高馬達的轉速。', pinyin: 'qǐng bāng wǒ men tiáo gāo mǎ dá de zhuǎn sù.', en: 'Please help us increase the motor speed.', th: 'ช่วยปรับความเร็วรอบของมอเตอร์ขึ้นให้หน่อยครับ', hsk: 4, catId: 'cat-auto', type: 'sentence' },
+            { id: 130, trad: '廠商代表下午會來開會。', pinyin: 'chǎng shāng dài biǎo xià wǔ huì lái kāi huì.', en: 'The vendor representative will come for a meeting this afternoon.', th: 'ตัวแทนซัพพลายเออร์จะเข้ามาประชุมช่วงบ่าย', hsk: 3, catId: 'cat-auto', type: 'sentence' },
+
+            // ==================== 2. DAILY LIFE & NEIGHBORS (30 Items) ====================
+            // Vocab (1-20)
+            { id: 201, trad: '倒垃圾', pinyin: 'dào lā jī', en: 'Take out the trash', th: 'เอาขยะไปทิ้ง', hsk: 2, catId: 'cat-daily', type: 'vocab' },
+            { id: 202, trad: '包裹', pinyin: 'bāo guǒ', en: 'Parcel / Package', th: 'พัสดุ', hsk: 3, catId: 'cat-daily', type: 'vocab' },
+            { id: 203, trad: '鄰居', pinyin: 'lín jū', en: 'Neighbor', th: 'เพื่อนบ้าน', hsk: 3, catId: 'cat-daily', type: 'vocab' },
+            { id: 204, trad: '管理員', pinyin: 'guǎn lǐ yuán', en: 'Building manager / Guard', th: 'ผู้ดูแลอาคาร / นิติบุคคล', hsk: 3, catId: 'cat-daily', type: 'vocab' },
+            { id: 205, trad: '外送', pinyin: 'wài sòng', en: 'Food delivery', th: 'อาหารเดลิเวอรี', hsk: 2, catId: 'cat-daily', type: 'vocab' },
+            { id: 206, trad: '便利商店', pinyin: 'biàn lì shāng diàn', en: 'Convenience store', th: 'ร้านสะดวกซื้อ', hsk: 2, catId: 'cat-daily', type: 'vocab' },
+            { id: 207, trad: '超市', pinyin: 'chāo shì', en: 'Supermarket', th: 'ซูเปอร์มาร์เก็ต', hsk: 2, catId: 'cat-daily', type: 'vocab' },
+            { id: 208, trad: '水電費', pinyin: 'shuǐ diàn fèi', en: 'Utility bills', th: 'ค่าน้ำค่าไฟ', hsk: 3, catId: 'cat-daily', type: 'vocab' },
+            { id: 209, trad: '鑰匙', pinyin: 'yào shi', en: 'Key', th: 'กุญแจ', hsk: 3, catId: 'cat-daily', type: 'vocab' },
+            { id: 210, trad: '電梯', pinyin: 'diàn tī', en: 'Elevator', th: 'ลิฟต์', hsk: 3, catId: 'cat-daily', type: 'vocab' },
+            { id: 211, trad: '陽台', pinyin: 'yáng tái', en: 'Balcony', th: 'ระเบียง', hsk: 4, catId: 'cat-daily', type: 'vocab' },
+            { id: 212, trad: '洗衣機', pinyin: 'xǐ yī jī', en: 'Washing machine', th: 'เครื่องซักผ้า', hsk: 3, catId: 'cat-daily', type: 'vocab' },
+            { id: 213, trad: '冷氣', pinyin: 'lěng qì', en: 'Air conditioner', th: 'เครื่องปรับอากาศ', hsk: 2, catId: 'cat-daily', type: 'vocab' },
+            { id: 214, trad: '網路', pinyin: 'wǎng lù', en: 'Internet', th: 'อินเทอร์เน็ต', hsk: 2, catId: 'cat-daily', type: 'vocab' },
+            { id: 215, trad: '郵差', pinyin: 'yóu chāi', en: 'Mailman', th: 'บุรุษไปรษณีย์', hsk: 3, catId: 'cat-daily', type: 'vocab' },
+            { id: 216, trad: '門鈴', pinyin: 'mén líng', en: 'Doorbell', th: 'ออดกริ่งประตู', hsk: 3, catId: 'cat-daily', type: 'vocab' },
+            { id: 217, trad: '噪音', pinyin: 'zào yīn', en: 'Noise', th: 'เสียงรบกวน', hsk: 4, catId: 'cat-daily', type: 'vocab' },
+            { id: 218, trad: '漏水', pinyin: 'lòu shuǐ', en: 'Water leak', th: 'น้ำรั่ว', hsk: 3, catId: 'cat-daily', type: 'vocab' },
+            { id: 219, trad: '房東', pinyin: 'fáng dōng', en: 'Landlord', th: 'เจ้าของบ้านเช่า', hsk: 3, catId: 'cat-daily', type: 'vocab' },
+            { id: 220, trad: '押金', pinyin: 'yā jīn', en: 'Deposit', th: 'เงินประกัน / เงินมัดจำ', hsk: 4, catId: 'cat-daily', type: 'vocab' },
+            // Sentences (21-30)
+            { id: 221, trad: '請問垃圾車幾點會來？', pinyin: 'qǐng wèn lā jī chē jǐ diǎn huì lái?', en: 'What time does the garbage truck arrive?', th: 'สอบถามหน่อยครับ รถขยะจะมากี่โมง?', hsk: 2, catId: 'cat-daily', type: 'sentence' },
+            { id: 222, trad: '管理員，請問有我的包裹嗎？', pinyin: 'guǎn lǐ yuán, qǐng wèn yǒu wǒ de bāo guǒ ma?', en: 'Manager, is there any parcel for me?', th: 'คุณรปภ./นิติครับ มีพัสดุของผมไหมครับ?', hsk: 3, catId: 'cat-daily', type: 'sentence' },
+            { id: 223, trad: '不好意思，晚上請放低音量。', pinyin: 'bù hǎo yì si, wǎn shang qǐng fàng dī yīn liàng.', en: 'Sorry, please keep the noise down at night.', th: 'ขอโทษด้วยนะครับ ตอนกลางคืนช่วยเบาเสียงหน่อยครับ', hsk: 3, catId: 'cat-daily', type: 'sentence' },
+            { id: 224, trad: '浴室好像有一點漏水。', pinyin: 'yù shì hǎo xiàng yǒu yī diǎn lòu shuǐ.', en: 'The bathroom seems to have a bit of a water leak.', th: 'ห้องน้ำเหมือนจะมีการรั่วซึมเล็กน้อยครับ', hsk: 3, catId: 'cat-daily', type: 'sentence' },
+            { id: 225, trad: '這月的超商水電費我繳過了。', pinyin: 'zhè yuè de chāo shāng shuǐ diàn fèi wǒ jiǎo guò le.', en: 'I have paid this month\'s utility bills at the convenience store.', th: 'ค่าน้ำค่าไฟเดือนนี้ผมจ่ายที่ร้านสะดวกซื้อแล้วครับ', hsk: 3, catId: 'cat-daily', type: 'sentence' },
+            { id: 226, trad: '我可以把外送放在大廳嗎？', pinyin: 'wǒ kě yǐ bǎ wài sòng fàng zài dà tīng ma?', en: 'Can I leave the food delivery in the lobby?', th: 'ผมขอวางอาหารเดลิเวอรีไว้ที่ล็อบบี้ได้ไหมครับ?', hsk: 2, catId: 'cat-daily', type: 'sentence' },
+            { id: 227, trad: '房間的冷氣不太會冷。', pinyin: 'fáng jiān de lěng qì bù tài huì lěng.', en: 'The room air conditioner is not very cold.', th: 'แอร์ในห้องไม่ค่อยเย็นเลยครับ', hsk: 2, catId: 'cat-daily', type: 'sentence' },
+            { id: 228, trad: '我不小心把鑰匙鎖在房間裡了。', pinyin: 'wǒ bù xiǎo xīn bǎ yào shi suǒ zài fáng jiān lǐ le.', en: 'I accidentally locked my key inside the room.', th: 'ผมบังเอิญลืมกุญแจไว้ในห้องครับ', hsk: 3, catId: 'cat-daily', type: 'sentence' },
+            { id: 229, trad: '早安！今天天氣真好。', pinyin: 'zǎo ān! jīn tiān tiān qì zhēn hǎo.', en: 'Good morning! The weather is really nice today.', th: 'อรุณสวัสดิ์ครับ! วันนี้อากาศดีจังเลย', hsk: 1, catId: 'cat-daily', type: 'sentence' },
+            { id: 230, trad: '網路速度今天有點慢。', pinyin: 'wǎng lù sù dù jīn tiān yǒu diǎn màn.', en: 'The internet speed is a bit slow today.', th: 'ความเร็วอินเทอร์เน็ตวันนี้ช้าไปหน่อยครับ', hsk: 2, catId: 'cat-daily', type: 'sentence' },
+
+            // ==================== 3. WORKPLACE & COLLEAGUES (30 Items) ====================
+            // Vocab (1-20)
+            { id: 301, trad: '開會', pinyin: 'kāi huì', en: 'Hold a meeting', th: 'ประชุม', hsk: 2, catId: 'cat-work', type: 'vocab' },
+            { id: 302, trad: '簡報', pinyin: 'jiǎn bào', en: 'Presentation', th: 'การนำเสนอ / พรีเซนเทชัน', hsk: 4, catId: 'cat-work', type: 'vocab' },
+            { id: 303, trad: '專案', pinyin: 'zhuān àn', en: 'Project', th: 'โปรเจกต์ / โครงการ', hsk: 4, catId: 'cat-work', type: 'vocab' },
+            { id: 304, trad: '主管', pinyin: 'zhǔ guǎn', en: 'Supervisor / Manager', th: 'หัวหน้างาน', hsk: 4, catId: 'cat-work', type: 'vocab' },
+            { id: 305, trad: '同事', pinyin: 'tóng shì', en: 'Colleague / Coworker', th: 'เพื่อนร่วมงาน', hsk: 2, catId: 'cat-work', type: 'vocab' },
+            { id: 306, trad: '加班', pinyin: 'jiā bān', en: 'Overtime work', th: 'ทํางานล่วงเวลา (OT)', hsk: 3, catId: 'cat-work', type: 'vocab' },
+            { id: 307, trad: '請假', pinyin: 'qǐng jià', en: 'Take leave of absence', th: 'ลางาน', hsk: 3, catId: 'cat-work', type: 'vocab' },
+            { id: 308, trad: '出差', pinyin: 'chū chāi', en: 'Business trip', th: 'ไปทำงานต่างจังหวัด/ต่างประเทศ', hsk: 3, catId: 'cat-work', type: 'vocab' },
+            { id: 309, trad: '報告', pinyin: 'bào gào', en: 'Report', th: 'รายงาน', hsk: 3, catId: 'cat-work', type: 'vocab' },
+            { id: 310, trad: '合約', pinyin: 'hé yuē', en: 'Contract / Agreement', th: 'สัญญา', hsk: 4, catId: 'cat-work', type: 'vocab' },
+            { id: 311, trad: '死線 / 截止日期', pinyin: 'jié zhǐ rì qī', en: 'Deadline', th: 'วันสิ้นสุด / เดดไลน์', hsk: 4, catId: 'cat-work', type: 'vocab' },
+            { id: 312, trad: '預算', pinyin: 'yù suàn', en: 'Budget', th: 'งบประมาณ', hsk: 4, catId: 'cat-work', type: 'vocab' },
+            { id: 313, trad: '印表機', pinyin: 'yìn biǎo jī', en: 'Printer', th: 'เครื่องพิมพ์', hsk: 3, catId: 'cat-work', type: 'vocab' },
+            { id: 314, trad: '蓋章', pinyin: 'gài zhāng', en: 'Stamp / Seal', th: 'ประทับตรา / เซ็นอนุมัติ', hsk: 4, catId: 'cat-work', type: 'vocab' },
+            { id: 315, trad: '簽名', pinyin: 'qiān míng', en: 'Signature', th: 'ลายเซ็น', hsk: 3, catId: 'cat-work', type: 'vocab' },
+            { id: 316, trad: '名片', pinyin: 'míng piàn', en: 'Business card', th: 'นามบัตร', hsk: 3, catId: 'cat-work', type: 'vocab' },
+            { id: 317, trad: '午餐會', pinyin: 'wǔ cān huì', en: 'Lunch meeting', th: 'รับประทานอาหารเที่ยงเพื่อคุยงาน', hsk: 3, catId: 'cat-work', type: 'vocab' },
+            { id: 318, trad: '升遷', pinyin: 'shēng qiān', en: 'Promotion', th: 'การเลื่อนตำแหน่ง', hsk: 5, catId: 'cat-work', type: 'vocab' },
+            { id: 319, trad: '交接', pinyin: 'jiāo jiē', en: 'Handover / Transfer duties', th: 'ส่งมอบงาน / ส่งต่อหน้าที่', hsk: 5, catId: 'cat-work', type: 'vocab' },
+            { id: 320, trad: '離職', pinyin: 'lí zhí', en: 'Resign / Leave job', th: 'ลาออกจากงาน', hsk: 4, catId: 'cat-work', type: 'vocab' },
+            // Sentences (21-30)
+            { id: 321, trad: '我們下午兩點在三樓會議室開會。', pinyin: 'wǒ men xià wǔ liǎng diǎn zài sān lóu huì yì shì kāi huì.', en: 'We have a meeting at 2 PM in the 3rd floor meeting room.', th: 'พวกเรามีประชุมตอนบ่ายสองที่ห้องประชุมชั้นสามครับ', hsk: 3, catId: 'cat-work', type: 'sentence' },
+            { id: 322, trad: '這份報告明天下班前要繳交。', pinyin: 'zhè fèn bào gào míng tiān xià bān qián yào jiǎo jiāo.', en: 'This report is due before off-work tomorrow.', th: 'รายงานฉบับนี้ต้องส่งก่อนเลิกงานพรุ่งนี้ครับ', hsk: 4, catId: 'cat-work', type: 'sentence' },
+            { id: 323, trad: '我今天身體不舒服，想請病假一天。', pinyin: 'wǒ jīn tiān shēn tǐ bù shū fu, xiǎng qǐng bìng jià yì tiān.', en: 'I am not feeling well today, I would like to take a day off sick leave.', th: 'วันนี้ผมรู้สึกไม่ค่อยสบาย ขอลาป่วยหนึ่งวันครับ', hsk: 3, catId: 'cat-work', type: 'sentence' },
+            { id: 324, trad: '請問您可以幫我在這份合約簽名嗎？', pinyin: 'qǐng wèn nǐ kě yǐ bāng wǒ zài zhè fèn hé yuē qiān míng ma?', en: 'Could you please help sign this contract for me?', th: 'รบกวนช่วยเซ็นชื่อในสัญญาฉบับนี้ให้หน่อยได้ไหมครับ?', hsk: 4, catId: 'cat-work', type: 'sentence' },
+            { id: 325, trad: '這是我的新名片，請多指教。', pinyin: 'zhè shì wǒ de xīn míng piàn, qǐng duō zhǐ jiào.', en: 'This is my new business card, nice to work with you.', th: 'นี่คือนามบัตรใหม่ของผม ฝากเนื้อฝากตัวด้วยครับ', hsk: 3, catId: 'cat-work', type: 'sentence' },
+            { id: 326, trad: '印表機好像沒有紙了。', pinyin: 'yìn biǎo jī hǎo xiàng méi yǒu zhǐ le.', en: 'The printer seems to be out of paper.', th: 'ดูเหมือนว่ากระดาษเครื่องพิมพ์จะหมดแล้ว', hsk: 3, catId: 'cat-work', type: 'sentence' },
+            { id: 327, trad: '下週我要去台中出差三天。', pinyin: 'xià zhōu wǒ yào qù tái zhōng chū chāi sān tiān.', en: 'Next week I will go on a business trip to Taichung for 3 days.', th: 'สัปดาห์หน้าผมจะไปทำงานต่างจังหวัดที่ไทจงสามวันครับ', hsk: 3, catId: 'cat-work', type: 'sentence' },
+            { id: 328, trad: '今晚我們需要加班完成這個專案。', pinyin: 'jīn wǎn wǒ men xū yào jiā bān wán chéng zhè ge zhuān àn.', en: 'Tonight we need to work overtime to complete this project.', th: 'คืนนี้พวกเราต้องทำ OT เพื่อให้โครงการนี้เสร็จครับ', hsk: 4, catId: 'cat-work', type: 'sentence' },
+            { id: 329, trad: '主管，請問現在方便討論專案嗎？', pinyin: 'zhǔ guǎn, qǐng wèn xiàn zài fāng biàn tǎo lùn zhuān àn ma?', en: 'Supervisor, is it convenient to discuss the project now?', th: 'หัวหน้าครับ ตอนนี้สะดวกหารือเกี่ยวกับโปรเจกต์ไหมครับ?', hsk: 4, catId: 'cat-work', type: 'sentence' },
+            { id: 330, trad: '中午要不要一起去吃飯？', pinyin: 'zhōng wǔ yào bú yào yì qǐ qù chī fàn?', en: 'Would you like to go eat lunch together?', th: 'มื้อเที่ยงนี้อยากไปทานข้าวด้วยกันไหมครับ?', hsk: 2, catId: 'cat-work', type: 'sentence' },
+
+            // ==================== 4. SELF INTRODUCTION (30 Items) ====================
+            // Vocab (1-20)
+            { id: 401, trad: '介紹', pinyin: 'jiè shào', en: 'Introduce', th: 'แนะนำ', hsk: 2, catId: 'cat-intro', type: 'vocab' },
+            { id: 402, trad: '工程師', pinyin: 'gōng chéng shī', en: 'Engineer', th: 'วิศวกร', hsk: 3, catId: 'cat-intro', type: 'vocab' },
+            { id: 403, trad: '泰國', pinyin: 'tài guó', en: 'Thailand', th: 'ประเทศไทย', hsk: 2, catId: 'cat-intro', type: 'vocab' },
+            { id: 404, trad: '經驗', pinyin: 'jīng yàn', en: 'Experience', th: 'ประสบการณ์', hsk: 3, catId: 'cat-intro', type: 'vocab' },
+            { id: 405, trad: '專業', pinyin: 'zhuān yè', en: 'Profession / Major', th: 'วิชาเอก / ความเชี่ยวชาญเฉพาะทาง', hsk: 4, catId: 'cat-intro', type: 'vocab' },
+            { id: 406, trad: '興趣', pinyin: 'xìng qù', en: 'Hobby / Interest', th: 'งานอดิเรก / ความสนใจ', hsk: 3, catId: 'cat-intro', type: 'vocab' },
+            { id: 407, trad: '畢業', pinyin: 'bì yè', en: 'Graduate', th: 'สำเร็จการศึกษา', hsk: 3, catId: 'cat-intro', type: 'vocab' },
+            { id: 408, trad: '大學', pinyin: 'dà xué', en: 'University', th: 'มหาวิทยาลัย', hsk: 2, catId: 'cat-intro', type: 'vocab' },
+            { id: 409, trad: '能力', pinyin: 'néng lì', en: 'Ability / Capability', th: 'ความสามารถ', hsk: 3, catId: 'cat-intro', type: 'vocab' },
+            { id: 410, trad: '語言', pinyin: 'yǔ yán', en: 'Language', th: 'ภาษา', hsk: 3, catId: 'cat-intro', type: 'vocab' },
+            { id: 411, trad: '中文', pinyin: 'zhōng wén', en: 'Chinese language', th: 'ภาษาจีน', hsk: 1, catId: 'cat-intro', type: 'vocab' },
+            { id: 412, trad: '英文', pinyin: 'yīng wén', en: 'English language', th: 'ภาษาอังกฤษ', hsk: 2, catId: 'cat-intro', type: 'vocab' },
+            { id: 413, trad: '職位', pinyin: 'zhí wèi', en: 'Position / Title', th: 'ตำแหน่งงาน', hsk: 4, catId: 'cat-intro', type: 'vocab' },
+            { id: 414, trad: '個性', pinyin: 'gè xìng', en: 'Personality', th: 'นิสัย / บุคลิกภาพ', hsk: 4, catId: 'cat-intro', type: 'vocab' },
+            { id: 415, trad: '責任心', pinyin: 'zé rèn xīn', en: 'Sense of responsibility', th: 'ความรับผิดชอบ', hsk: 5, catId: 'cat-intro', type: 'vocab' },
+            { id: 416, trad: '團隊合作', pinyin: 'tuán duì hé zuò', en: 'Teamwork', th: 'การทำงานเป็นทีม', hsk: 4, catId: 'cat-intro', type: 'vocab' },
+            { id: 417, trad: '學習', pinyin: 'xué xí', en: 'Learn / Study', th: 'เรียนรู้', hsk: 1, catId: 'cat-intro', type: 'vocab' },
+            { id: 418, trad: '目標', pinyin: 'mù biāo', en: 'Goal / Target', th: 'เป้าหมาย', hsk: 4, catId: 'cat-intro', type: 'vocab' },
+            { id: 419, trad: '適應', pinyin: 'shì yìng', en: 'Adapt / Adjust', th: 'ปรับตัว', hsk: 4, catId: 'cat-intro', type: 'vocab' },
+            { id: 420, trad: '優點', pinyin: 'yōu diǎn', en: 'Strengths / Advantages', th: 'ข้อดี / จุดแข็ง', hsk: 4, catId: 'cat-intro', type: 'vocab' },
+            // Sentences (21-30)
+            { id: 421, trad: '大家好，我自我介紹一下。', pinyin: 'dà jiā hǎo, wǒ zì wǒ jiè shào yí xià.', en: 'Hello everyone, let me introduce myself.', th: 'สวัสดีทุกท่านครับ ขออนุญาตแนะนำตัวเองนะครับ', hsk: 2, catId: 'cat-intro', type: 'sentence' },
+            { id: 422, trad: '我是來自泰國的自動化工程師。', pinyin: 'wǒ shì lái zì tài guó de zì dòng huà gōng chéng shī.', en: 'I am an automation engineer from Thailand.', th: 'ผมเป็นวิศวกรระบบอัตโนมัติมาจากประเทศไทยครับ', hsk: 3, catId: 'cat-intro', type: 'sentence' },
+            { id: 423, trad: '我有五年的相關工作經驗。', pinyin: 'wǒ yǒu wǔ nián de xiāng guān gōng zuò jīng yàn.', en: 'I have 5 years of relevant work experience.', th: 'ผมมีประสบการณ์ทำงานที่เกี่ยวข้อง 5 ปีครับ', hsk: 3, catId: 'cat-intro', type: 'sentence' },
+            { id: 424, trad: '我的母語是泰語，也會說流利的英文。', pinyin: 'wǒ de mǔ yǔ shì tài yǔ, yě huì shuō liú lì de yīng wén.', en: 'My native language is Thai, and I speak fluent English.', th: 'ภาษาแม่ของผมคือภาษาไทย และสามารถพูดภาษาอังกฤษได้อย่างคล่องแคล่วครับ', hsk: 4, catId: 'cat-intro', type: 'sentence' },
+            { id: 425, trad: '很高興認識大家，請多指教。', pinyin: 'hěn gāo xìng rèn shi dà jiā, qǐng duō zhǐ jiào.', en: 'Very glad to meet everyone, pleased to work with you.', th: 'ยินดีที่ได้รู้จักทุกคนครับ ยินดีที่ได้ร่วมงานกันครับ', hsk: 2, catId: 'cat-intro', type: 'sentence' },
+            { id: 426, trad: '我目前正在努力學習華語。', pinyin: 'wǒ mù qián zhèng zài nǔ lì xué xí huá yǔ.', en: 'I am currently working hard on learning Mandarin.', th: 'ตอนนี้ผมกำลังพยายามเรียนภาษาจีนอยู่อย่างตั้งใจครับ', hsk: 2, catId: 'cat-intro', type: 'sentence' },
+            { id: 427, trad: '我的專長是設備調試與維護。', pinyin: 'wǒ de zhuān cháng shì shè bèi tiáo shì yǔ wéi hù.', en: 'My specialty is equipment commissioning and maintenance.', th: 'ความเชี่ยวชาญของผมคือการปรับจูนและซ่อมบำรุงเครื่องจักร', hsk: 5, catId: 'cat-intro', type: 'sentence' },
+            { id: 428, trad: '我是一個很有責任心的人。', pinyin: 'wǒ shì yí ge hěn yǒu zé rèn xīn de rén.', en: 'I am a person with a high sense of responsibility.', th: 'ผมเป็นคนที่มีความรับผิดชอบสูงมากครับ', hsk: 4, catId: 'cat-intro', type: 'sentence' },
+            { id: 429, trad: '平時我的興趣是看書和打羽毛球。', pinyin: 'píng shí wǒ de xìng qù shì kàn shū hé dǎ yǔ máo qiú.', en: 'My hobbies are reading books and playing badminton.', th: 'ยามว่างงานอดิเรกของผมคือการอ่านหนังสือและตีแบดมินตันครับ', hsk: 3, catId: 'cat-intro', type: 'sentence' },
+            { id: 430, trad: '希望能為公司做出更多貢獻。', pinyin: 'xī wàng néng wèi gōng sī zuò chū gèng duō gòng xiàn.', en: 'I hope to contribute more to the company.', th: 'หวังว่าจะสามารถสร้างประโยชน์และคุณค่าให้กับบริษัทได้มากขึ้นครับ', hsk: 5, catId: 'cat-intro', type: 'sentence' },
+
+            // ==================== 5. TRAVEL & AIRPORT (30 Items) ====================
+            // Vocab (1-20)
+            { id: 501, trad: '護照', pinyin: 'hù zhào', en: 'Passport', th: 'หนังสือเดินทาง / พาสปอร์ต', hsk: 3, catId: 'cat-travel', type: 'vocab' },
+            { id: 502, trad: '簽證', pinyin: 'qiān zhèng', en: 'Visa', th: 'วีซ่า', hsk: 3, catId: 'cat-travel', type: 'vocab' },
+            { id: 503, trad: '登機證', pinyin: 'dēng jī zhèng', en: 'Boarding pass', th: 'ตั๋วขึ้นเครื่อง / บอร์ดดิ้งพาส', hsk: 4, catId: 'cat-travel', type: 'vocab' },
+            { id: 504, trad: '行李箱', pinyin: 'xíng li xiāng', en: 'Suitcase / Luggage', th: 'กระเป๋าเดินทาง', hsk: 3, catId: 'cat-travel', type: 'vocab' },
+            { id: 505, trad: '海關', pinyin: 'hǎi guān', en: 'Customs', th: 'ด่านศุลกากร / ศุลกากร', hsk: 4, catId: 'cat-travel', type: 'vocab' },
+            { id: 506, trad: '計程車', pinyin: 'jì chéng chē', en: 'Taxi', th: 'แท็กซี่', hsk: 2, catId: 'cat-travel', type: 'vocab' },
+            { id: 507, trad: '捷運', pinyin: 'jié yùn', en: 'MRT / Subway', th: 'รถไฟฟ้า MRT (ไต้หวัน)', hsk: 3, catId: 'cat-travel', type: 'vocab' },
+            { id: 508, trad: '高鐵', pinyin: 'gāo tiě', en: 'High Speed Rail (HSR)', th: 'รถไฟความเร็วสูง', hsk: 3, catId: 'cat-travel', type: 'vocab' },
+            { id: 509, trad: '飯店', pinyin: 'fàn diàn', en: 'Hotel', th: 'โรงแรม', hsk: 2, catId: 'cat-travel', type: 'vocab' },
+            { id: 510, trad: '登機門', pinyin: 'dēng jī mén', en: 'Boarding gate', th: 'ประตูขึ้นเครื่อง / เกท', hsk: 4, catId: 'cat-travel', type: 'vocab' },
+            { id: 511, trad: '延誤', pinyin: 'yán wù', en: 'Flight delay', th: 'เที่ยวบินล่าช้า / ดีเลย์', hsk: 4, catId: 'cat-travel', type: 'vocab' },
+            { id: 512, trad: '換錢 / 兌換', pinyin: 'huàn qián', en: 'Exchange currency', th: 'แลกเปลี่ยนเงินตรา', hsk: 3, catId: 'cat-travel', type: 'vocab' },
+            { id: 513, trad: '地圖', pinyin: 'dì tú', en: 'Map', th: 'แผนที่', hsk: 3, catId: 'cat-travel', type: 'vocab' },
+            { id: 514, trad: '悠遊卡', pinyin: 'yōu yóu kǎ', en: 'EasyCard (Taiwan Transit)', th: 'บัตรโย่วโย่วข่า (EasyCard)', hsk: 2, catId: 'cat-travel', type: 'vocab' },
+            { id: 515, trad: '儲值', pinyin: 'chǔ zhí', en: 'Top up / Recharge card', th: 'เติมเงิน', hsk: 3, catId: 'cat-travel', type: 'vocab' },
+            { id: 516, trad: '班機', pinyin: 'bān jī', en: 'Flight number', th: 'เที่ยวบิน', hsk: 4, catId: 'cat-travel', type: 'vocab' },
+            { id: 517, trad: '超重', pinyin: 'chāo zhòng', en: 'Overweight luggage', th: 'น้ำหนักเกิน', hsk: 4, catId: 'cat-travel', type: 'vocab' },
+            { id: 518, trad: '轉機', pinyin: 'zhuǎn jī', en: 'Transfer flight / Layover', th: 'ต่อเครื่อง', hsk: 4, catId: 'cat-travel', type: 'vocab' },
+            { id: 519, trad: '景點', pinyin: 'jǐng diǎn', en: 'Tourist attraction', th: 'สถานที่ท่องเที่ยว', hsk: 4, catId: 'cat-travel', type: 'vocab' },
+            { id: 520, trad: '收據', pinyin: 'shōu jù', en: 'Receipt', th: 'ใบเสร็จรับเงิน', hsk: 4, catId: 'cat-travel', type: 'vocab' },
+            // Sentences (21-30)
+            { id: 521, trad: '請問登機門在哪裡？', pinyin: 'qǐng wèn dēng jī mén zài nǎ lǐ?', en: 'Where is the boarding gate?', th: 'ประตูขึ้นเครื่อง (เกท) อยู่ที่ไหนครับ?', hsk: 2, catId: 'cat-travel', type: 'sentence' },
+            { id: 522, trad: '請幫我的悠遊卡儲值五百元。', pinyin: 'qǐng bāng wǒ de yōu yóu kǎ chǔ zhí wǔ bǎi yuán.', en: 'Please top up 500 NTD on my EasyCard.', th: 'ช่วยเติมเงินใส่บัตร EasyCard ให้ 500 เหรียญครับ', hsk: 3, catId: 'cat-travel', type: 'sentence' },
+            { id: 523, trad: '司機，請帶我去台北車站。', pinyin: 'sī jī, qǐng dài wǒ qù tái běi chē zhàn.', en: 'Driver, please take me to Taipei Main Station.', th: 'คนขับครับ ช่วยไปส่งผมที่สถานีรถไฟไทเปครับ', hsk: 2, catId: 'cat-travel', type: 'sentence' },
+            { id: 524, trad: '我的行李好像遺失了。', pinyin: 'wǒ de xíng li hǎo xiàng yí shī le.', en: 'My luggage seems to be lost.', th: 'กระเป๋าเดินทางของผมเหมือนจะหายครับ', hsk: 4, catId: 'cat-travel', type: 'sentence' },
+            { id: 525, trad: '請問附近有自動提款機嗎？', pinyin: 'qǐng wèn fù jìn yǒu zì dòng tí kuǎn jī ma?', en: 'Is there an ATM nearby?', th: 'สอบถามหน่อยครับ แถวนี้มีตู้ ATM ไหมครับ?', hsk: 3, catId: 'cat-travel', type: 'sentence' },
+            { id: 526, trad: '請問這班捷運有到台北101嗎？', pinyin: 'qǐng wèn zhè bān jié yùn yǒu dào tái běi yī líng yī ma?', en: 'Does this MRT line go to Taipei 101?', th: 'รถไฟฟ้าสายนี้ไปถึงไทเป 101 ไหมครับ?', hsk: 3, catId: 'cat-travel', type: 'sentence' },
+            { id: 527, trad: '我想辦理飯店入住手續。', pinyin: 'wǒ xiǎng bàn lǐ fàn diàn rù zhù shǒu xù.', en: 'I would like to check in to the hotel.', th: 'ผมขอทำเรื่องเช็คอินเข้าพักโรงแรมครับ', hsk: 3, catId: 'cat-travel', type: 'sentence' },
+            { id: 528, trad: '請問高鐵票在哪裡購買？', pinyin: 'qǐng wèn gāo tiě piào zài nǎ lǐ gòu mǎi?', en: 'Where can I buy High Speed Rail tickets?', th: 'ตั๋วรถไฟความเร็วสูงซื้อได้ที่ไหนครับ?', hsk: 3, catId: 'cat-travel', type: 'sentence' },
+            { id: 529, trad: '我的班機因為天氣原因延誤了。', pinyin: 'wǒ de bān jī yīn wèi tiān qì yuán yīn yán wù le.', en: 'My flight is delayed due to weather conditions.', th: 'เที่ยวบินของผมล่าช้าเนื่องจากสภาพอากาศครับ', hsk: 4, catId: 'cat-travel', type: 'sentence' },
+            { id: 530, trad: '到達目的地後請印收據給我。', pinyin: 'dào dá mù dì dì hòu qǐng yìn shōu jù gěi wǒ.', en: 'Please print a receipt for me after arriving at the destination.', th: 'เมื่อถึงจุดหมายแล้ว รบกวนพิมพ์ใบเสร็จให้ผมด้วยครับ', hsk: 4, catId: 'cat-travel', type: 'sentence' },
+
+            // ==================== 6. RESTAURANT & DINING (30 Items) ====================
+            // Vocab (1-20)
+            { id: 601, trad: '菜單', pinyin: 'cài dān', en: 'Menu', th: 'เมนูอาหาร', hsk: 2, catId: 'cat-dining', type: 'vocab' },
+            { id: 602, trad: '點餐', pinyin: 'diǎn cān', en: 'Order food', th: 'สั่งอาหาร', hsk: 2, catId: 'cat-dining', type: 'vocab' },
+            { id: 603, trad: '結帳 / 買單', pinyin: 'jié zhàng', en: 'Pay the bill / Check out', th: 'เช็คบิล / จ่ายเงิน', hsk: 3, catId: 'cat-dining', type: 'vocab' },
+            { id: 604, trad: '外帶', pinyin: 'wài dài', en: 'Takeaway / To go', th: 'ใส่ห่อ / กลับบ้าน', hsk: 2, catId: 'cat-dining', type: 'vocab' },
+            { id: 605, trad: '內用', pinyin: 'nèi yòng', en: 'Dine in', th: 'ทานที่ร้าน', hsk: 2, catId: 'cat-dining', type: 'vocab' },
+            { id: 606, trad: '素食', pinyin: 'sù shí', en: 'Vegetarian food', th: 'อาหารมังสวิรัติ / เจ', hsk: 3, catId: 'cat-dining', type: 'vocab' },
+            { id: 607, trad: '辣', pinyin: 'là', en: 'Spicy', th: 'เผ็ด', hsk: 2, catId: 'cat-dining', type: 'vocab' },
+            { id: 608, trad: '微辣', pinyin: 'wēi là', en: 'Mildly spicy', th: 'เผ็ดน้อย', hsk: 2, catId: 'cat-dining', type: 'vocab' },
+            { id: 609, trad: '牛肉麵', pinyin: 'niú ròu miàn', en: 'Beef noodles', th: 'ก๋วยเตี๋ยวเนื้อ', hsk: 2, catId: 'cat-dining', type: 'vocab' },
+            { id: 610, trad: '珍珠奶茶', pinyin: 'zhēn zhū nǎi chá', en: 'Bubble milk tea', th: 'ชานมไข่มุก', hsk: 2, catId: 'cat-dining', type: 'vocab' },
+            { id: 611, trad: '去冰', pinyin: 'qù bīng', en: 'No ice', th: 'ไม่ใส่ใส่น้ำแข็ง / เอาไอซ์ออก', hsk: 2, catId: 'cat-dining', type: 'vocab' },
+            { id: 612, trad: '半糖', pinyin: 'bàn táng', en: 'Half sugar (50%)', th: 'หวาน 50%', hsk: 2, catId: 'cat-dining', type: 'vocab' },
+            { id: 613, trad: '微糖', pinyin: 'wēi táng', en: 'Low sugar (30%)', th: 'หวานน้อย (30%)', hsk: 2, catId: 'cat-dining', type: 'vocab' },
+            { id: 614, trad: '餐具', pinyin: 'cān jù', en: 'Tableware / Utensils', th: 'ช้อนส้อม / จานชาม', hsk: 3, catId: 'cat-dining', type: 'vocab' },
+            { id: 615, trad: '筷子', pinyin: 'kuài zi', en: 'Chopsticks', th: 'ตะเกียบ', hsk: 2, catId: 'cat-dining', type: 'vocab' },
+            { id: 616, trad: '衛生紙', pinyin: 'wèi shēng zhǐ', en: 'Tissue / Napkin', th: 'กระดาษทิชชู่', hsk: 2, catId: 'cat-dining', type: 'vocab' },
+            { id: 617, trad: '招牌菜', pinyin: 'zhāo pái cài', en: 'Signature dish', th: 'เมนูเด็ด / เมนูแนะนำประจำร้าน', hsk: 4, catId: 'cat-dining', type: 'vocab' },
+            { id: 618, trad: '過敏', pinyin: 'guò mǐn', en: 'Allergy', th: 'แพ้ (อาหาร)', hsk: 4, catId: 'cat-dining', type: 'vocab' },
+            { id: 619, trad: '水餃', pinyin: 'shuǐ jiǎo', en: 'Dumplings', th: 'เกี๊ยวซ่า / เกี๊ยวน้ำ', hsk: 2, catId: 'cat-dining', type: 'vocab' },
+            { id: 620, trad: '滷肉飯', pinyin: 'lǔ ròu fàn', en: 'Braised pork rice', th: 'ข้าวหน้าหมูพะโล้สไตล์ไต้หวัน', hsk: 2, catId: 'cat-dining', type: 'vocab' },
+            // Sentences (21-30)
+            { id: 621, trad: '老闆，請問還有位置嗎？', pinyin: 'lǎo bǎn, qǐng wèn hái yǒu wèi zi ma?', en: 'Boss, are there any seats available?', th: 'เถ้าแก่ครับ สอบถามหน่อยว่ายังมีที่นั่งไหมครับ?', hsk: 2, catId: 'cat-dining', type: 'sentence' },
+            { id: 622, trad: '這杯珍珠奶茶我要微糖去冰。', pinyin: 'zhè bēi zhēn zhū nǎi chá wǒ yào wēi táng qù bīng.', en: 'I would like this bubble tea with low sugar and no ice.', th: 'ชานมไข่มุกแก้วนี้ขอหวานน้อยไม่ใส่น้ำแข็งครับ', hsk: 2, catId: 'cat-dining', type: 'sentence' },
+            { id: 623, trad: '請問你們店裡的招牌菜是什麼？', pinyin: 'qǐng wèn nǐ men diàn lǐ de zhāo pái cài shì shén me?', en: 'What is your restaurant\'s signature dish?', th: 'สอบถามหน่อยครับ เมนูแนะนำประจำร้านคืออะไรครับ?', hsk: 4, catId: 'cat-dining', type: 'sentence' },
+            { id: 624, trad: '我不吃花生，我對花生過敏。', pinyin: 'wǒ bù chī huā shēng, wǒ duì huā shēng guò mǐn.', en: 'I don\'t eat peanuts, I am allergic to peanuts.', th: 'ผมไม่ทานถั่วครับ ผมแพ้ถั่วลิสง', hsk: 4, catId: 'cat-dining', type: 'sentence' },
+            { id: 625, trad: '這份餐點我們要內用。', pinyin: 'zhè fèn cān diǎn wǒ men yào nèi yòng.', en: 'We would like to dine in for this meal.', th: 'มื้อนี้พวกเราขอทานที่ร้านครับ', hsk: 2, catId: 'cat-dining', type: 'sentence' },
+            { id: 626, trad: '麻煩給我一雙筷子和衛生紙。', pinyin: 'má fan gěi wǒ yì shuāng kuài zi hé wèi shēng zhǐ.', en: 'Please give me a pair of chopsticks and napkins.', th: 'รบกวนขอตะเกียบหนึ่งคู่กับกระดาษทิชชู่ด้วยครับ', hsk: 2, catId: 'cat-dining', type: 'sentence' },
+            { id: 627, trad: '這個湯可以幫我做不辣的嗎？', pinyin: 'zhè ge tāng kě yǐ bāng wǒ zuò bù là de ma?', en: 'Can you make this soup not spicy for me?', th: 'ซุปนี้ช่วยทำแบบไม่เผ็ดให้หน่อยได้ไหมครับ?', hsk: 2, catId: 'cat-dining', type: 'sentence' },
+            { id: 628, trad: '服務員，我們要結帳。', pinyin: 'fú wù yuán, wǒ men yào jié zhàng.', en: 'Waiter, we are ready to pay.', th: 'พนักงานครับ พวกเราขอเช็คบิลครับ', hsk: 2, catId: 'cat-dining', type: 'sentence' },
+            { id: 629, trad: '請幫我打包外帶，謝謝。', pinyin: 'qǐng bāng wǒ dǎ bāo wài dài, xiè xie.', en: 'Please pack this for takeaway, thank you.', th: 'ช่วยห่อกลับบ้านให้หน่อยครับ ขอบคุณครับ', hsk: 2, catId: 'cat-dining', type: 'sentence' },
+            { id: 630, trad: '這家餐廳 provide 刷卡服務嗎？', pinyin: 'zhè jiā cān tīng tí gōng shuā kǎ fú wù ma?', en: 'Does this restaurant accept credit cards?', th: 'ร้านนี้รับชำระด้วยบัตรเครดิตไหมครับ?', hsk: 3, catId: 'cat-dining', type: 'sentence' }
         ];
 
         let currentMode = 'vocab';
         let currentBankPage = 1;
-        let bankPageSize = 12;
+        let bankPageSize = 24;
 
         let fcSessionList = [];
         let fcIndex = 0;
