@@ -229,6 +229,13 @@
                     <select id="quiz-filter-cat" class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm"></select>
                 </div>
                 <div>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">HSK LEVEL</label>
+                    <select id="quiz-filter-hsk" class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm">
+                        <option value="ALL">All Levels</option>
+                        <option value="1">HSK 1</option><option value="2">HSK 2</option><option value="3">HSK 3</option><option value="4">HSK 4</option><option value="5">HSK 5</option><option value="6">HSK 6</option>
+                    </select>
+                </div>
+                <div>
                     <label class="text-xs font-bold text-slate-500 block mb-1">COUNT</label>
                     <select id="quiz-filter-count" class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm">
                         <option value="10">10 items</option><option value="20" selected>20 items</option><option value="30">30 items</option>
@@ -1663,34 +1670,38 @@
         }
 
         function applyQuizFilter() {
-            const mode = document.getElementById('quiz-filter-mode').value;
-            const cat = document.getElementById('quiz-filter-cat').value;
-            const count = parseInt(document.getElementById('quiz-filter-count').value);
+    const mode = document.getElementById('quiz-filter-mode').value;
+    const cat = document.getElementById('quiz-filter-cat').value;
+    const hsk = document.getElementById('quiz-filter-hsk').value;
+    const count = parseInt(document.getElementById('quiz-filter-count').value);
 
-            let pool = database.filter(item => {
-                if (item.type !== mode) return false;
-                if (cat !== 'ALL' && item.catId !== cat) return false;
-                return true;
-            });
+    // 1. กรอง mode, cat และ hsk ร่วมกันใน pool เดียวกัน
+    let pool = database.filter(item => {
+        if (item.type !== mode) return false;
+        if (cat !== 'ALL' && item.catId !== cat) return false;
+        if (hsk !== 'ALL' && String(item.hsk) !== String(hsk)) return false; // แก้ไขจุดนี้
+        return true;
+    });
 
-            if (pool.length === 0) pool = database.filter(item => item.type === mode);
+    // 2. ถ้ากรองแล้วไม่พบคำศัพท์เลย ให้ Fallback กลับไปดึงเฉพาะ mode เพื่อไม่ให้หน้าเว็บค้าง
+    if (pool.length === 0) pool = database.filter(item => item.type === mode);
 
-            pool = pool.sort(() => 0.5 - Math.random()).slice(0, count);
+    pool = pool.sort(() => 0.5 - Math.random()).slice(0, count);
 
-            quizQuestions = pool.map(item => {
-                let distractors = database.filter(d => d.type === mode && d.id !== item.id);
-                distractors = distractors.sort(() => 0.5 - Math.random()).slice(0, 3);
-                const options = [item, ...distractors].sort(() => 0.5 - Math.random());
-                return { item, options };
-            });
+    quizQuestions = pool.map(item => {
+        let distractors = database.filter(d => d.type === mode && d.id !== item.id);
+        distractors = distractors.sort(() => 0.5 - Math.random()).slice(0, 3);
+        const options = [item, ...distractors].sort(() => 0.5 - Math.random());
+        return { item, options };
+    });
 
-            quizCurrentIdx = 0;
-            quizUserAnswers = new Array(quizQuestions.length).fill(null);
+    quizCurrentIdx = 0;
+    quizUserAnswers = new Array(quizQuestions.length).fill(null);
 
-            document.getElementById('quiz-active-area').classList.remove('hidden');
-            document.getElementById('quiz-summary-area').classList.add('hidden');
-            renderQuizQuestion();
-        }
+    document.getElementById('quiz-active-area').classList.remove('hidden');
+    document.getElementById('quiz-summary-area').classList.add('hidden');
+    renderQuizQuestion();
+}
 
         function renderQuizQuestion() {
             const total = quizQuestions.length;
